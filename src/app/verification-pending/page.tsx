@@ -36,15 +36,6 @@ export default function VerificationPendingPage() {
           </p>
         </div>
 
-        <div className="bg-yellow-900/20 border border-yellow-700/50 rounded-lg p-4 mb-6">
-          <p className="text-yellow-300 text-sm font-semibold mb-2">
-            📍 Early Access Notice
-          </p>
-          <p className="text-yellow-200/80 text-sm">
-            Email verification is coming online Monday. For now, you can proceed directly to set up your account.
-          </p>
-        </div>
-
         <div className="flex flex-col gap-3">
           <button
             onClick={() => router.push('/start-analysis')}
@@ -55,11 +46,11 @@ export default function VerificationPendingPage() {
           <button
             onClick={() => {
               // In production, this would resend the verification email
-              alert('Verification email resent! (Feature coming online Monday)');
+              alert('Verification email resent!');
             }}
             className="text-neutral-400 hover:text-green-400 text-sm transition"
           >
-            Didn't receive the email? Resend
+            Didn&apos;t receive the email? Resend
           </button>
         </div>
       </div>

@@ -114,7 +114,7 @@ export async function sendWaitlistEmail(email: string) {
         <div style="background: #f9f9f9; border-left: 4px solid #22c55e; padding: 16px; margin: 20px 0;">
           <h3 style="margin-top: 0; color: #333;">What to Expect</h3>
           <p style="color: #666; margin: 0;">
-            Our full bankability engine goes live Monday. You'll receive an email with access instructions 
+            Our full bankability engine goes live January 12, 2025. You'll receive an email with access instructions 
             and your personalized onboarding link. 
           </p>
         </div>
@@ -133,7 +133,7 @@ export async function sendWaitlistEmail(email: string) {
         </p>
       </div>
     `)
-    .setText(`You're on the waitlist for Level 10 Financial. Our full bankability engine goes live Monday. Visit ${process.env.NEXT_PUBLIC_APP_URL}/how-it-works to learn more.`);
+    .setText(`You're on the waitlist for Level 10 Financial. Our full bankability engine goes live January 12, 2025. Visit ${process.env.NEXT_PUBLIC_APP_URL}/how-it-works to learn more.`);
 
   try {
     await mailerSend.email.send(emailParams);

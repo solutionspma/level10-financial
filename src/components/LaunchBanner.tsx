@@ -25,10 +25,10 @@ export default function LaunchBanner() {
             <span className="text-2xl">🚀</span>
             <div className="flex-1">
               <p className="text-white font-semibold text-sm md:text-base">
-                Early Access — Full Bankability Engine Going Live Monday
+                Early Access — Full Bankability Engine Going Live January 12, 2025
               </p>
               <p className="text-green-200 text-xs md:text-sm">
-                Explore the platform now. Identity verification, live credit pulls, and lender matching activate Monday.
+                Explore the platform now. Identity verification, live credit pulls, and lender matching activate January 12, 2025.
               </p>
             </div>
           </div>
