@@ -1,9 +1,9 @@
-module.exports = {
-  build: {
-    command: 'npm run build',
-    publish: '.next'
-  },
-  env: {
-    NEXT_PUBLIC_PEXELS_API_KEY: 'VpQgkm08WyYNjJ41qE0q7CJz3x07nfqaBTBiJyFUzQBbHdqjYlC2s7vw'
-  }
-}
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[build.environment]
+  NEXT_PUBLIC_PEXELS_API_KEY = "VpQgkm08WyYNjJ41qE0q7CJz3x07nfqaBTBiJyFUzQBbHdqjYlC2s7vw"
