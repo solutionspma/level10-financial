@@ -24,10 +24,10 @@ export default function RootLayout({
                   <Image 
                     src="/level10_logo_cleaned.png" 
                     alt="Level 10 Financial" 
-                    width={180} 
-                    height={50}
+                    width={240} 
+                    height={60}
                     priority
-                    className="h-12 w-auto"
+                    className="h-16 w-auto"
                   />
                 </a>
                 <nav className="space-x-4 text-sm">
