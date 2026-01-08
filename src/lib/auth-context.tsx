@@ -10,6 +10,8 @@ interface User {
   hasAuthorizedAnalysis?: boolean;
   hasVerifiedIdentity?: boolean;
   isBusinessFunding?: boolean;
+  emailVerified?: boolean;
+  verificationSent?: boolean;
 }
 
 interface AuthContextType {
@@ -24,19 +26,21 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(() => {
+    // Check for existing session on mount
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('level10_user');
+      return storedUser ? JSON.parse(storedUser) : null;
+    }
+    return null;
+  });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Check for existing session
-    const storedUser = localStorage.getItem('level10_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
+    // Effect for future real-time sync if needed
   }, []);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, _password: string) => {
     // Demo auth - just check if email exists
     setLoading(true);
     

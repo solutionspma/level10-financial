@@ -29,7 +29,7 @@ export default function Login() {
       } else {
         router.push('/dashboard');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to sign in. Please try again.');
     } finally {
       setLoading(false);

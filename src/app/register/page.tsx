@@ -34,8 +34,11 @@ export default function Register() {
     try {
       const fullName = `${formData.firstName} ${formData.lastName}`;
       await signUp(formData.email, formData.password, fullName);
-      router.push('/start-analysis');
-    } catch (err) {
+      
+      // Mark that verification email should be sent
+      // In production, this would trigger the actual email
+      router.push('/verification-pending');
+    } catch {
       setError('Failed to create account. Please try again.');
     } finally {
       setLoading(false);

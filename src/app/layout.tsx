@@ -3,6 +3,7 @@ import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import Image from "next/image";
 import FooterContent from "@/components/FooterContent";
+import LaunchBanner from "@/components/LaunchBanner";
 
 export const metadata: Metadata = {
   title: "Level 10 Financial",
@@ -19,16 +20,17 @@ export default function RootLayout({
       <body className="bg-neutral-950 text-neutral-100">
         <AuthProvider>
           <div className="min-h-screen flex flex-col">
-            <header className="border-b border-neutral-800 p-4">
+            <LaunchBanner />
+            <header className="border-b border-neutral-800 py-3 px-4">
               <div className="max-w-7xl mx-auto flex justify-between items-center">
                 <a href="/" className="flex items-center hover:opacity-80 transition">
                   <Image 
                     src="/level10_logo_cleaned.png" 
                     alt="Level 10 Financial" 
-                    width={240} 
-                    height={60}
+                    width={360} 
+                    height={90}
                     priority
-                    className="h-16 w-auto"
+                    className="h-20 w-auto"
                   />
                 </a>
                 <nav className="space-x-4 text-sm">

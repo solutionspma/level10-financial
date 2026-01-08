@@ -38,12 +38,17 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-yellow-900/20 border border-yellow-700 rounded-xl p-8 text-center max-w-2xl mx-auto">
+        <div className="bg-yellow-900/20 border border-yellow-700 rounded-xl p-8 text-center max-w-2xl mx-auto mb-6">
           <h2 className="text-2xl font-bold text-yellow-400 mb-4">Complete Your Setup</h2>
-          <p className="text-neutral-300 mb-6">
+          <p className="text-neutral-300 mb-4">
             To view your real Bankability Score and personalized roadmap, you need to authorize 
             access to your financial data.
           </p>
+          <div className="bg-yellow-800/20 border border-yellow-600/30 rounded-lg p-3 mb-6 text-sm">
+            <p className="text-yellow-200">
+              Full credit analysis and identity verification coming online Monday.
+            </p>
+          </div>
           <a 
             href="/start-analysis"
             className="inline-block bg-green-500 text-black font-semibold px-8 py-3 rounded-lg hover:bg-green-600 transition"

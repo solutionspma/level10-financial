@@ -60,6 +60,16 @@ export default function StartAnalysis() {
           To generate your <strong>Level 10 Bankability Score</strong> and personalized improvement roadmap, 
           we need your authorization to access your financial data.
         </p>
+        
+        <div className="bg-yellow-900/20 border border-yellow-700/50 rounded-lg p-4 mb-4">
+          <p className="text-yellow-300 text-sm font-semibold mb-2">
+            🚀 Early Access — Full Engine Going Live Monday
+          </p>
+          <p className="text-yellow-200/80 text-sm">
+            Identity verification and live credit pulls are coming online Monday. For now, you can explore the platform and see how the roadmap works.
+          </p>
+        </div>
+
         <div className="space-y-3">
           <div className="flex items-start gap-3">
             <span className="text-green-400 text-xl">✓</span>
