@@ -1,6 +1,12 @@
+'use client';
+
 import Image from 'next/image';
+import { useState } from 'react';
+import { ModalStepConnect, ModalStepAnalyze, ModalStepCoach, ModalStepApply } from '@/components/StepModals';
 
 export default function HowItWorks() {
+  const [activeModal, setActiveModal] = useState<number | null>(null);
+
   const steps = [
     ['Connect', 'Securely connect your credit and financial data', 'https://images.pexels.com/photos/4386431/pexels-photo-4386431.jpeg?auto=compress&cs=tinysrgb&w=800'],
     ['Analyze', 'We generate your Level10 Bankability Score', 'https://images.pexels.com/photos/7413915/pexels-photo-7413915.jpeg?auto=compress&cs=tinysrgb&w=800'],
@@ -29,15 +35,20 @@ export default function HowItWorks() {
 
       <div className="grid md:grid-cols-2 gap-6">
         {steps.map(([title, desc, img], index) => (
-          <div key={title} className="relative h-64 rounded-xl overflow-hidden group bg-neutral-900">
+          <button
+            key={title}
+            onClick={() => setActiveModal(index)}
+            className="relative h-64 rounded-xl overflow-hidden group bg-neutral-900 text-left cursor-pointer transition-transform hover:scale-[1.02]"
+          >
             <Image src={img} alt={title} fill className="object-cover opacity-40 group-hover:opacity-50 transition-opacity" />
             <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/80 to-transparent" />
             <div className="absolute inset-0 p-8 flex flex-col justify-end">
               <div className="text-green-400 font-bold text-2xl mb-2">Step {index + 1}</div>
               <h3 className="text-2xl font-semibold mb-2 text-white">{title}</h3>
-              <p className="text-neutral-300">{desc}</p>
+              <p className="text-neutral-300 mb-2">{desc}</p>
+              <span className="text-green-400 text-sm font-semibold">Click to learn more →</span>
             </div>
-          </div>
+          </button>
         ))}
       </div>
 
@@ -46,6 +57,12 @@ export default function HowItWorks() {
           Start Your Journey
         </a>
       </div>
+
+      {/* Modals */}
+      <ModalStepConnect isOpen={activeModal === 0} onClose={() => setActiveModal(null)} />
+      <ModalStepAnalyze isOpen={activeModal === 1} onClose={() => setActiveModal(null)} />
+      <ModalStepCoach isOpen={activeModal === 2} onClose={() => setActiveModal(null)} />
+      <ModalStepApply isOpen={activeModal === 3} onClose={() => setActiveModal(null)} />
     </div>
   );
 }

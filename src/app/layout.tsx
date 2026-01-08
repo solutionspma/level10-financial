@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import Image from "next/image";
+import FooterContent from "@/components/FooterContent";
 
 export const metadata: Metadata = {
   title: "Level 10 Financial",
@@ -38,14 +39,7 @@ export default function RootLayout({
               </div>
             </header>
             <main className="flex-1">{children}</main>
-          <footer className="border-t border-neutral-800 p-6 text-xs text-center text-neutral-400">
-            <div className="mb-2">
-              © {new Date().getFullYear()} Level 10 Financial · FCRA / GLBA / DPPA Compliant
-            </div>
-            <div>
-              A <a href="https://pitchmarketingagency.com" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:underline">Pitch Marketing Strategies & Public Relations</a> Company
-            </div>
-          </footer>
+            <FooterContent />
           </div>
         </AuthProvider>
       </body>

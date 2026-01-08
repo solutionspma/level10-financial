@@ -25,12 +25,6 @@ export default function Register() {
     setLoading(true);
     setError('');
 
-    if (!formData.creditAuth) {
-      setError('You must authorize credit pull to continue');
-      setLoading(false);
-      return;
-    }
-
     if (!formData.termsAccepted) {
       setError('You must accept the terms and conditions');
       setLoading(false);
@@ -40,7 +34,7 @@ export default function Register() {
     try {
       const fullName = `${formData.firstName} ${formData.lastName}`;
       await signUp(formData.email, formData.password, fullName);
-      router.push('/dashboard');
+      router.push('/start-analysis');
     } catch (err) {
       setError('Failed to create account. Please try again.');
     } finally {
@@ -142,29 +136,6 @@ export default function Register() {
               />
             </div>
             
-            <div className="bg-yellow-900/20 border border-yellow-700 rounded-lg p-4 mt-6">
-              <h3 className="text-yellow-400 font-semibold mb-2">⚠️ Credit Pull Authorization</h3>
-              <p className="text-sm text-neutral-300 mb-3">
-                By creating an account, you authorize Level 10 Financial to access your credit report 
-                via a <strong>soft inquiry</strong> that will NOT affect your credit score.
-              </p>
-              <label className="flex items-start gap-2 text-sm cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  className="mt-1" 
-                  checked={formData.creditAuth}
-                  onChange={(e) => setFormData({...formData, creditAuth: e.target.checked})}
-                  required 
-                />
-                <span>
-                  I authorize Level10 to access my credit report for evaluation, coaching, 
-                  and funding prequalification purposes as described in our{' '}
-                  <a href="/permissible-purpose" className="text-green-400 hover:underline">Permissible Purpose</a>{' '}
-                  and <a href="/fcra" className="text-green-400 hover:underline">FCRA Compliance</a> policies.
-                </span>
-              </label>
-            </div>
-            
             <label className="flex items-start gap-2 text-sm text-neutral-400 cursor-pointer">
               <input 
                 type="checkbox" 
@@ -184,7 +155,7 @@ export default function Register() {
               disabled={loading}
               className="w-full bg-green-500 text-black font-semibold py-3 rounded-lg hover:bg-green-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Creating account...' : 'Create Account & Start Analysis'}
+              {loading ? 'Creating account...' : 'Create Account'}
             </button>
           </form>
           

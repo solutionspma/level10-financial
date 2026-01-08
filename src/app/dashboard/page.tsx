@@ -1,6 +1,60 @@
+'use client';
+
 import Image from 'next/image';
+import { useAuth } from '@/lib/auth-context';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Dashboard() {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/login');
+    }
+  }, [user, router]);
+
+  if (!user) return null;
+
+  // Show preview mode if no authorization
+  if (!user.hasAuthorizedAnalysis) {
+    return (
+      <div className="max-w-7xl mx-auto px-6 py-10">
+        {/* Hero Section */}
+        <div className="relative h-48 mb-8 rounded-2xl overflow-hidden">
+          <Image
+            src="https://images.pexels.com/photos/6802042/pexels-photo-6802042.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+            alt="Dashboard overview"
+            fill
+            className="object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/95 via-neutral-950/80 to-transparent" />
+          <div className="absolute inset-0 flex items-center px-10">
+            <div>
+              <h1 className="text-4xl font-bold text-white mb-2">Bankability Dashboard</h1>
+              <p className="text-lg text-neutral-200">Preview Mode - Authorization Required</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-yellow-900/20 border border-yellow-700 rounded-xl p-8 text-center max-w-2xl mx-auto">
+          <h2 className="text-2xl font-bold text-yellow-400 mb-4">Complete Your Setup</h2>
+          <p className="text-neutral-300 mb-6">
+            To view your real Bankability Score and personalized roadmap, you need to authorize 
+            access to your financial data.
+          </p>
+          <a 
+            href="/start-analysis"
+            className="inline-block bg-green-500 text-black font-semibold px-8 py-3 rounded-lg hover:bg-green-600 transition"
+          >
+            Complete Authorization
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
       {/* Hero Section */}

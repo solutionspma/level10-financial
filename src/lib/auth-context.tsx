@@ -7,6 +7,9 @@ interface User {
   email: string;
   name: string;
   role: 'user' | 'lender' | 'admin';
+  hasAuthorizedAnalysis?: boolean;
+  hasVerifiedIdentity?: boolean;
+  isBusinessFunding?: boolean;
 }
 
 interface AuthContextType {
@@ -15,6 +18,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, name: string) => Promise<void>;
   signOut: () => void;
+  updateUser: (updates: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -79,8 +83,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
+  const updateUser = (updates: Partial<User>) => {
+    if (user) {
+      const updatedUser = { ...user, ...updates };
+      localStorage.setItem('level10_user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
