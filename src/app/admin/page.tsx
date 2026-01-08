@@ -1,8 +1,24 @@
+import Image from 'next/image';
+
 export default function Admin() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
-      <h1 className="text-4xl font-bold mb-2">Level10 Admin</h1>
-      <p className="text-neutral-400 mb-8">Platform management and oversight</p>
+      {/* Hero Section */}
+      <div className="relative h-48 mb-8 rounded-2xl overflow-hidden">
+        <Image
+          src="https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+          alt="Admin dashboard"
+          fill
+          className="object-cover opacity-30"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/95 via-neutral-950/80 to-transparent" />
+        <div className="absolute inset-0 flex items-center px-10">
+          <div>
+            <h1 className="text-4xl font-bold text-white mb-2">Level 10 Admin</h1>
+            <p className="text-lg text-neutral-200">Platform management and oversight</p>
+          </div>
+        </div>
+      </div>
 
       <div className="grid md:grid-cols-4 gap-6 mb-8">
         <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">

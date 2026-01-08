@@ -1,8 +1,24 @@
+import Image from 'next/image';
+
 export default function Dashboard() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
-      <h1 className="text-4xl font-bold mb-2">Bankability Dashboard</h1>
-      <p className="text-neutral-400 mb-8">Your complete financial health overview</p>
+      {/* Hero Section */}
+      <div className="relative h-48 mb-8 rounded-2xl overflow-hidden">
+        <Image
+          src="https://images.pexels.com/photos/6802042/pexels-photo-6802042.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+          alt="Dashboard overview"
+          fill
+          className="object-cover opacity-30"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/95 via-neutral-950/80 to-transparent" />
+        <div className="absolute inset-0 flex items-center px-10">
+          <div>
+            <h1 className="text-4xl font-bold text-white mb-2">Bankability Dashboard</h1>
+            <p className="text-lg text-neutral-200">Your complete financial health overview</p>
+          </div>
+        </div>
+      </div>
 
       <div className="grid md:grid-cols-3 gap-6 mb-8">
         <div className="bg-gradient-to-br from-green-900 to-green-950 border border-green-800 rounded-xl p-6">

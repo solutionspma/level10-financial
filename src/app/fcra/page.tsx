@@ -1,11 +1,28 @@
+import Image from 'next/image';
+
 export default function FCRA() {
   return (
-    <div className="max-w-4xl mx-auto px-6 py-16">
-      <h1 className="text-4xl font-bold mb-6">FCRA Compliance</h1>
+    <div className="max-w-6xl mx-auto px-6 py-10">
+      {/* Hero Section */}
+      <div className="relative h-64 mb-8 rounded-2xl overflow-hidden">
+        <Image
+          src="https://images.pexels.com/photos/5668473/pexels-photo-5668473.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+          alt="Security and compliance"
+          fill
+          className="object-cover opacity-30"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/95 via-neutral-950/80 to-transparent" />
+        <div className="absolute inset-0 flex items-center px-10">
+          <div>
+            <h1 className="text-5xl font-bold text-white mb-4">FCRA Compliance</h1>
+            <p className="text-xl text-neutral-200">Your privacy and data security are our top priority</p>
+          </div>
+        </div>
+      </div>
       
-      <div className="space-y-6 text-neutral-300">
+      <div className="max-w-4xl mx-auto space-y-6 text-neutral-300">
         <p className="text-lg">
-          Level10 Financial is committed to full compliance with the Fair Credit Reporting Act (FCRA) 
+          Level 10 Financial is committed to full compliance with the Fair Credit Reporting Act (FCRA) 
           and maintains rigorous standards for consumer credit data protection.
         </p>
 

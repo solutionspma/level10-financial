@@ -1,8 +1,24 @@
+import Image from 'next/image';
+
 export default function LenderPortal() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
-      <h1 className="text-4xl font-bold mb-2">Lender Portal</h1>
-      <p className="text-neutral-400 mb-8">Review applicants, approve or coach—no silent denials</p>
+      {/* Hero Section */}
+      <div className="relative h-48 mb-8 rounded-2xl overflow-hidden">
+        <Image
+          src="https://images.pexels.com/photos/3184639/pexels-photo-3184639.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+          alt="Lender portal"
+          fill
+          className="object-cover opacity-30"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/95 via-neutral-950/80 to-transparent" />
+        <div className="absolute inset-0 flex items-center px-10">
+          <div>
+            <h1 className="text-4xl font-bold text-white mb-2">Lender Portal</h1>
+            <p className="text-lg text-neutral-200">Review applicants, approve or coach—no silent denials</p>
+          </div>
+        </div>
+      </div>
 
       <div className="grid md:grid-cols-4 gap-6 mb-8">
         <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
