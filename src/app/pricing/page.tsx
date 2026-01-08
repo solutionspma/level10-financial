@@ -55,7 +55,7 @@ export default function Pricing() {
           </div>
 
           <a href="/register" className="inline-block bg-green-500 text-black px-10 py-4 rounded-lg font-bold text-lg hover:bg-green-600 transition">
-            Start 7-Day Free Trial
+            Get Started - $10/month
           </a>
           <p className="text-sm text-neutral-400 mt-4">Cancel anytime. No commitments.</p>
         </div>

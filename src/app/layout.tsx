@@ -30,9 +30,14 @@ export default function RootLayout({
               </div>
             </header>
             <main className="flex-1">{children}</main>
-            <footer className="border-t border-neutral-800 p-4 text-xs text-center text-neutral-400">
+          <footer className="border-t border-neutral-800 p-6 text-xs text-center text-neutral-400">
+            <div className="mb-2">
               © {new Date().getFullYear()} Level 10 Financial · FCRA / GLBA / DPPA Compliant
-            </footer>
+            </div>
+            <div>
+              A <a href="https://pitchmarketingagency.com" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:underline">Pitch Marketing Strategies & Public Relations</a> Company
+            </div>
+          </footer>
           </div>
         </AuthProvider>
       </body>
