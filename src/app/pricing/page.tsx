@@ -55,9 +55,9 @@ export default function Pricing() {
           </div>
 
           <a href="/register" className="inline-block bg-green-500 text-black px-10 py-4 rounded-lg font-bold text-lg hover:bg-green-600 transition">
-            Get Started - $10/month
+            Get Started Now
           </a>
-          <p className="text-sm text-neutral-400 mt-4">Cancel anytime. No commitments.</p>
+          <p className="text-sm text-neutral-400 mt-4">Just $10/month. Cancel anytime.</p>
         </div>
 
         <div className="mt-8 text-center text-sm text-neutral-400">
