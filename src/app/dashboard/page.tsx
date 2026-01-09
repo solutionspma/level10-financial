@@ -13,10 +13,22 @@ export default function Dashboard() {
   useEffect(() => {
     if (!user) {
       router.push('/login');
+      return;
+    }
+    
+    // Check payment status - redirect if not paid
+    if (user.subscriptionStatus !== 'active') {
+      router.push('/payment');
+      return;
     }
   }, [user, router]);
 
   if (!user) return null;
+  
+  // Check payment gate
+  if (user.subscriptionStatus !== 'active') {
+    return null; // Will redirect via useEffect
+  }
 
   // Show preview mode if no authorization
   if (!user.hasAuthorizedCredit) {

@@ -36,16 +36,20 @@ export default function Register() {
       id: Math.random().toString(36).substr(2, 9),
       email: formData.email,
       name: `${formData.firstName} ${formData.lastName}`,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      phone: formData.phone,
       role: 'public' as const,
       hasAuthorizedCredit: false,
       kycStatus: 'none' as const,
       emailVerified: false,
+      subscriptionStatus: 'none' as const,
     };
 
     login(userData);
     
-    // Redirect to verification pending
-    router.push('/verification-pending');
+    // Redirect to KYC verification
+    router.push('/kyc');
   };
 
   return (

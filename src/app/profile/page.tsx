@@ -1,4 +1,62 @@
+'use client';
+
+import { useAuth } from '@/lib/auth-context';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
 export default function Profile() {
+  const { user, updateUser } = useAuth();
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    businessName: '',
+    ein: '',
+    industry: '',
+  });
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    
+    // Populate form with user data
+    setFormData({
+      firstName: user.firstName || user.name?.split(' ')[0] || '',
+      lastName: user.lastName || user.name?.split(' ').slice(1).join(' ') || '',
+      email: user.email || '',
+      phone: user.phone || '',
+      businessName: user.businessName || '',
+      ein: user.ein || '',
+      industry: user.industry || 'Professional Services',
+    });
+  }, [user, router]);
+
+  const handleSavePersonal = () => {
+    updateUser({
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      name: `${formData.firstName} ${formData.lastName}`,
+      email: formData.email,
+      phone: formData.phone,
+    });
+    alert('Personal information updated successfully!');
+  };
+
+  const handleSaveBusiness = () => {
+    updateUser({
+      businessName: formData.businessName,
+      ein: formData.ein,
+      industry: formData.industry,
+    });
+    alert('Business information updated successfully!');
+  };
+
+  if (!user) return null;
+
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
       <h1 className="text-4xl font-bold mb-2">Profile Settings</h1>
@@ -14,7 +72,8 @@ export default function Profile() {
                 <input 
                   type="text" 
                   className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-2"
-                  defaultValue="Jason"
+                  value={formData.firstName}
+                  onChange={(e) => setFormData({...formData, firstName: e.target.value})}
                 />
               </div>
               <div>
@@ -22,7 +81,8 @@ export default function Profile() {
                 <input 
                   type="text" 
                   className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-2"
-                  defaultValue="Smith"
+                  value={formData.lastName}
+                  onChange={(e) => setFormData({...formData, lastName: e.target.value})}
                 />
               </div>
             </div>
@@ -32,7 +92,8 @@ export default function Profile() {
               <input 
                 type="email" 
                 className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-2"
-                defaultValue="jason@example.com"
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
               />
             </div>
             
@@ -41,12 +102,53 @@ export default function Profile() {
               <input 
                 type="tel" 
                 className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-2"
-                defaultValue="(555) 123-4567"
+                value={formData.phone}
+                onChange={(e) => setFormData({...formData, phone: e.target.value})}
               />
             </div>
           </div>
-          <button className="mt-4 bg-green-500 text-black px-6 py-2 rounded-lg font-semibold">Save Changes</button>
+          <button 
+            onClick={handleSavePersonal}
+            className="mt-4 bg-green-500 text-black px-6 py-2 rounded-lg font-semibold hover:bg-green-600 transition"
+          >
+            Save Changes
+          </button>
         </div>
+
+        {/* KYC Information Display (Read-only) */}
+        {user.kycStatus === 'verified' && (
+          <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Identity Verification (KYC)</h2>
+              <span className="bg-green-500 text-black text-xs font-bold px-3 py-1 rounded-full">VERIFIED</span>
+            </div>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-neutral-400">SSN</span>
+                <span>***-**-{user.ssn?.slice(-4) || '****'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-neutral-400">Date of Birth</span>
+                <span>{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : 'Not provided'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-neutral-400">Driver&apos;s License</span>
+                <span>{user.driversLicense || 'Not provided'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-neutral-400">License State</span>
+                <span>{user.licenseState || 'Not provided'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-neutral-400">Verified Date</span>
+                <span>{user.kycVerifiedDate ? new Date(user.kycVerifiedDate).toLocaleDateString() : 'N/A'}</span>
+              </div>
+            </div>
+            <p className="text-xs text-neutral-500 mt-4">
+              🔒 For security reasons, KYC information cannot be edited. Contact support to update.
+            </p>
+          </div>
+        )}
 
         <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
           <h2 className="text-xl font-semibold mb-4">Business Information</h2>
@@ -56,7 +158,8 @@ export default function Profile() {
               <input 
                 type="text" 
                 className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-2"
-                defaultValue="Acme Enterprises LLC"
+                value={formData.businessName}
+                onChange={(e) => setFormData({...formData, businessName: e.target.value})}
               />
             </div>
             
@@ -65,13 +168,18 @@ export default function Profile() {
               <input 
                 type="text" 
                 className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-2"
-                defaultValue="12-3456789"
+                value={formData.ein}
+                onChange={(e) => setFormData({...formData, ein: e.target.value})}
               />
             </div>
             
             <div>
               <label className="block text-sm font-medium mb-2">Industry</label>
-              <select className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-2">
+              <select 
+                className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-2"
+                value={formData.industry}
+                onChange={(e) => setFormData({...formData, industry: e.target.value})}
+              >
                 <option>Professional Services</option>
                 <option>Retail</option>
                 <option>Manufacturing</option>
@@ -79,22 +187,47 @@ export default function Profile() {
               </select>
             </div>
           </div>
-          <button className="mt-4 bg-green-500 text-black px-6 py-2 rounded-lg font-semibold">Save Changes</button>
+          <button 
+            onClick={handleSaveBusiness}
+            className="mt-4 bg-green-500 text-black px-6 py-2 rounded-lg font-semibold hover:bg-green-600 transition"
+          >
+            Save Changes
+          </button>
         </div>
 
         <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
           <h2 className="text-xl font-semibold mb-4">Subscription</h2>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <div className="font-semibold">Level10 Pro</div>
-              <div className="text-sm text-neutral-400">$10/month • Next billing: Feb 7, 2026</div>
+          {user.subscriptionStatus === 'active' ? (
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <div className="font-semibold">{user.subscriptionPlan || 'Level10 Pro'}</div>
+                  <div className="text-sm text-neutral-400">
+                    ${user.subscriptionAmount || 10}/month • Next billing: {user.nextBillingDate ? new Date(user.nextBillingDate).toLocaleDateString() : 'N/A'}
+                  </div>
+                </div>
+                <span className="bg-green-500 text-black text-xs font-bold px-3 py-1 rounded-full">ACTIVE</span>
+              </div>
+              <div className="flex gap-3">
+                <button className="border border-neutral-700 px-4 py-2 rounded-lg text-sm hover:bg-neutral-800 transition">
+                  Update Payment Method
+                </button>
+                <button className="border border-red-700 text-red-400 px-4 py-2 rounded-lg text-sm hover:bg-red-900/20 transition">
+                  Cancel Subscription
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-4">
+              <p className="text-neutral-400 mb-4">No active subscription</p>
+              <button 
+                onClick={() => router.push('/payment')}
+                className="bg-green-500 text-black px-6 py-2 rounded-lg font-semibold hover:bg-green-600 transition"
+              >
+                Start Subscription ($10/month)
+              </button>
             </div>
-            <span className="bg-green-500 text-black text-xs font-bold px-3 py-1 rounded-full">ACTIVE</span>
-          </div>
-          <div className="flex gap-3">
-            <button className="border border-neutral-700 px-4 py-2 rounded-lg text-sm">Update Payment Method</button>
-            <button className="border border-red-700 text-red-400 px-4 py-2 rounded-lg text-sm">Cancel Subscription</button>
-          </div>
+          )}
         </div>
 
         <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">

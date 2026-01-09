@@ -12,6 +12,25 @@ export interface User {
   hasAuthorizedCredit?: boolean;
   kycStatus?: 'none' | 'pending' | 'verified';
   emailVerified?: boolean;
+  // KYC fields
+  ssn?: string;
+  dateOfBirth?: string;
+  driversLicense?: string;
+  licenseState?: string;
+  kycVerifiedDate?: string;
+  // Payment fields
+  subscriptionStatus?: 'none' | 'active' | 'cancelled' | 'past_due';
+  subscriptionPlan?: string;
+  subscriptionAmount?: number;
+  nextBillingDate?: string;
+  // Personal fields
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  // Business fields
+  businessName?: string;
+  ein?: string;
+  industry?: string;
   // Lender-specific fields
   organizationName?: string;
   lenderType?: 'bank' | 'cdfi' | 'fintech' | 'private';
