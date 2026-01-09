@@ -32,9 +32,9 @@ export default function LenderDashboardPage() {
               Qualified borrower profiles will appear here once applicants match your criteria.
             </p>
           </div>
-          {user.lenderStatus === 'pending' && (
+          {user.lenderStatus === 'pending_admin_review' && (
             <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg px-4 py-2">
-              <span className="text-yellow-500 text-sm font-medium">Pending Admin Approval</span>
+              <span className="text-yellow-500 text-sm font-medium">⏳ Pending Admin Review</span>
             </div>
           )}
         </div>
@@ -79,17 +79,32 @@ export default function LenderDashboardPage() {
 
           {/* Action Cards */}
           <div className="grid md:grid-cols-3 gap-4 mt-8">
-            <div className="bg-neutral-950 border border-neutral-700 rounded-lg p-6 text-left hover:border-green-500 transition cursor-pointer">
+            <div className={`bg-neutral-950 border border-neutral-700 rounded-lg p-6 text-left transition ${
+              user.lenderStatus === 'active' ? 'hover:border-green-500 cursor-pointer' : 'opacity-60 cursor-not-allowed'
+            }`}>
               <h4 className="font-semibold mb-2">Define Your Products</h4>
               <p className="text-sm text-neutral-400">Set loan amounts, terms, and rates for each product you offer.</p>
+              {user.lenderStatus !== 'active' && (
+                <p className="text-xs text-yellow-500 mt-2">Available after approval</p>
+              )}
             </div>
-            <div className="bg-neutral-950 border border-neutral-700 rounded-lg p-6 text-left hover:border-green-500 transition cursor-pointer">
+            <div className={`bg-neutral-950 border border-neutral-700 rounded-lg p-6 text-left transition ${
+              user.lenderStatus === 'active' ? 'hover:border-green-500 cursor-pointer' : 'opacity-60 cursor-not-allowed'
+            }`}>
               <h4 className="font-semibold mb-2">Set Matching Criteria</h4>
               <p className="text-sm text-neutral-400">Configure minimum scores, revenue, credit thresholds, and more.</p>
+              {user.lenderStatus !== 'active' && (
+                <p className="text-xs text-yellow-500 mt-2">Available after approval</p>
+              )}
             </div>
-            <div className="bg-neutral-950 border border-neutral-700 rounded-lg p-6 text-left hover:border-green-500 transition cursor-pointer">
+            <div className={`bg-neutral-950 border border-neutral-700 rounded-lg p-6 text-left transition ${
+              user.lenderStatus === 'active' ? 'hover:border-green-500 cursor-pointer' : 'opacity-60 cursor-not-allowed'
+            }`}>
               <h4 className="font-semibold mb-2">Manage Preferences</h4>
               <p className="text-sm text-neutral-400">Control email notifications and dashboard settings.</p>
+              {user.lenderStatus !== 'active' && (
+                <p className="text-xs text-yellow-500 mt-2">Available after approval</p>
+              )}
             </div>
           </div>
 
@@ -120,7 +135,7 @@ export default function LenderDashboardPage() {
           </div>
           <div className="flex gap-4">
             <span className="text-green-500 font-bold">4.</span>
-            <p>You decide who to contact — no obligation, no fees per lead (pricing depends on your partnership tier).</p>
+            <p>You decide who to contact — no obligation, no upfront fees. Level10 earns a 5% commission only when you successfully fund a loan.</p>
           </div>
         </div>
       </div>

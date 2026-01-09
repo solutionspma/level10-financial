@@ -40,13 +40,13 @@ export default function LenderAgreementPage() {
       statesServed: signupData.statesServed,
       productsOffered: signupData.productsOffered,
       agreementAccepted: true,
-      lenderStatus: 'pending',
+      lenderStatus: 'pending_admin_review',
     });
 
     // Clear signup data
     sessionStorage.removeItem('lender_signup_data');
 
-    // Redirect to lender dashboard
+    // Redirect to pending status page
     router.push('/lender/dashboard');
   };
 
@@ -63,7 +63,7 @@ export default function LenderAgreementPage() {
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-4">Lender Participation Agreement</h1>
         <p className="text-xl text-neutral-400">
-          Please review the agreement below. Once accepted, your lender account will be activated.
+          Please review the agreement below. Your account will be submitted for admin review upon acceptance.
         </p>
       </div>
 
@@ -76,18 +76,76 @@ export default function LenderAgreementPage() {
           
           <p><strong>Parties:</strong> Level10 Financial, Inc. ("Level10") and the Participating Lender ("Lender")</p>
           
-          <h3 className="text-md font-semibold text-white mt-6">1. Purpose and Scope</h3>
+          <h3 className="text-md font-semibold text-white mt-6">1. Purpose</h3>
           <p>
-            This agreement governs the Lender&apos;s participation in the Level10 Financial platform (the "Platform"), which connects pre-qualified borrower applicants with lending partners based on defined lending criteria. Level10 provides borrower identity verification, soft credit pulls, and bankability assessments. The Lender receives borrower profiles that match their stated criteria and may choose to engage with those borrowers directly.
+            Level10 operates a bankability and borrower readiness platform. Borrowers are prepared and coached prior to lender review. Level10 routes applicants who are aligned with lender criteria and consented for review.
           </p>
           
-          <h3 className="text-md font-semibold text-white mt-6">2. No Obligation to Lend</h3>
+          <h3 className="text-md font-semibold text-white mt-6">2. No Upfront Fees</h3>
           <p>
-            Participation in the Platform does not obligate the Lender to make any loans, extend credit, or enter into agreements with any borrower. All lending decisions remain entirely at the Lender&apos;s discretion.
+            There are <strong>no subscription fees, tiers, or upfront costs</strong> for lenders to participate in Level10.
           </p>
           
-          <h3 className="text-md font-semibold text-white mt-6">3. Borrower Data and Privacy</h3>
+          <h3 className="text-md font-semibold text-white mt-6">3. Commission on Funded Deals</h3>
           <p>
+            Lender agrees to pay <strong>a commission equal to five percent (5%) of the funded loan amount</strong> for each loan funded through the Level10 platform.
+          </p>
+          <ul className="list-disc list-inside space-y-1 mt-2">
+            <li>Commission is due <strong>only upon successful funding</strong></li>
+            <li>No commission is owed on declined or withdrawn applications</li>
+          </ul>
+          
+          <h3 className="text-md font-semibold text-white mt-6">4. Approval or Coaching Requirement</h3>
+          <p>
+            Lender agrees to one of the following outcomes for each routed borrower:
+          </p>
+          <ul className="list-disc list-inside space-y-1 mt-2">
+            <li>Approval</li>
+            <li>Conditional approval</li>
+            <li>Coaching to approval</li>
+          </ul>
+          <p className="mt-2">
+            <strong>Silent denials are not permitted.</strong>
+          </p>
+          <p className="mt-2">
+            If a borrower is not approved, lender must provide a coaching reason indicating what must change for approval to be possible.
+          </p>
+          
+          <h3 className="text-md font-semibold text-white mt-6">5. Permissible Purpose (FCRA)</h3>
+          <p>
+            All borrower information is accessed solely for permissible purposes under the Fair Credit Reporting Act (FCRA), including credit evaluation and prequalification.
+          </p>
+          
+          <h3 className="text-md font-semibold text-white mt-6">6. Data Scope</h3>
+          <p>Level10 provides:</p>
+          <ul className="list-disc list-inside space-y-1 mt-2">
+            <li>Soft-pull credit insights</li>
+            <li>Borrower-submitted financial data</li>
+            <li>Identity verification status (when authorized)</li>
+          </ul>
+          <p className="mt-3">Level10 does not provide:</p>
+          <ul className="list-disc list-inside space-y-1 mt-2">
+            <li>Full credit reports without consent</li>
+            <li>SSNs unless explicitly authorized</li>
+            <li>Any data beyond borrower permission</li>
+          </ul>
+          
+          <h3 className="text-md font-semibold text-white mt-6">7. No Obligation to Fund</h3>
+          <p>
+            Lender is under no obligation to approve or fund any borrower.
+          </p>
+          
+          <h3 className="text-md font-semibold text-white mt-6">8. Feedback Loop</h3>
+          <p>
+            Lender feedback will be used to improve borrower readiness and platform matching. This feedback does not obligate lender to future approvals.
+          </p>
+          
+          <h3 className="text-md font-semibold text-white mt-6">9. Termination</h3>
+          <p>
+            Either party may terminate participation at any time.
+          </p>
+        </div>
+      </div>
             Level10 provides the Lender with borrower profiles containing name, email, phone, business information, and bankability scores derived from soft credit inquiries. The Lender agrees to:
           </p>
           <ul className="list-disc ml-6 space-y-1">
@@ -158,7 +216,7 @@ export default function LenderAgreementPage() {
             className="mt-1 w-5 h-5 bg-neutral-950 border-2 border-neutral-700 rounded focus:outline-none focus:ring-2 focus:ring-green-500 checked:bg-green-500 checked:border-green-500 transition"
           />
           <span className="text-base group-hover:text-white transition">
-            I agree to the Level10 Lender Participation Agreement on behalf of <strong>{signupData.organizationName}</strong>
+            I agree to the Level10 Lender Participation Agreement
           </span>
         </label>
       </div>
@@ -177,7 +235,7 @@ export default function LenderAgreementPage() {
           disabled={!agreed || loading}
           className="bg-green-500 text-black px-8 py-3 rounded-lg font-semibold hover:bg-green-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Activating...' : 'Activate Lender Account'}
+          {loading ? 'Submitting...' : 'Submit for Review'}
         </button>
       </div>
     </section>
