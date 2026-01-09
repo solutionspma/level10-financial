@@ -1,10 +1,10 @@
-# 🚀 Deploy Stripe LIVE Keys to Production
+# 🚀 Deploy Production Keys to Netlify
 
 ## ✅ Local Development Keys Configured
 
-Your `.env.local` file contains your Stripe LIVE keys for local testing.
+Your `.env.local` file contains your production keys for local testing.
 
-⚠️ **These are PRODUCTION keys - test carefully before deploying!**
+⚠️ **These are LIVE keys - test carefully before deploying!**
 
 ---
 
@@ -26,6 +26,20 @@ Your `.env.local` file contains your Stripe LIVE keys for local testing.
 1. Click **Add a variable** → **Add a single variable**
 2. **Key**: `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 3. **Value**: Copy from your `.env.local` file (starts with `pk_live_`)
+4. **Scopes**: Select **Production**
+5. Click **Create variable**
+
+### Step 4: Add OPENAI_API_KEY
+1. Click **Add a variable** → **Add a single variable**
+2. **Key**: `OPENAI_API_KEY`
+3. **Value**: Copy from your `.env.local` file (starts with `sk-proj-`)
+4. **Scopes**: Select **Production**
+5. Click **Create variable**
+
+### Step 5: Add TELNYX_API_KEY (Optional - for future SMS)
+1. Click **Add a variable** → **Add a single variable**
+2. **Key**: `TELNYX_API_KEY`
+3. **Value**: Copy from your `.env.local` file (starts with `KEY`)
 4. **Scopes**: Select **Production**
 5. Click **Create variable**
 
