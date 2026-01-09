@@ -13,7 +13,6 @@ function CheckoutForm() {
   const router = useRouter();
   const { user, updateUser } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [zip, setZip] = useState('');
   const stripe = useStripe();
   const elements = useElements();
 
@@ -39,9 +38,6 @@ function CheckoutForm() {
         card: cardElement,
         billing_details: {
           email: user?.email,
-          address: {
-            postal_code: zip,
-          },
         },
       });
 
@@ -66,7 +62,11 @@ function CheckoutForm() {
       const data = await response.json();
 
       if (!response.ok || data.error) {
-        alert(`Payment failed: ${data.error || 'Unknown error'}`);
+        console.error('Payment API error:', data);
+        const errorMsg = data.decline_code 
+          ? `Card declined: ${data.decline_code}` 
+          : data.error || 'Unknown error';
+        alert(`Payment failed: ${errorMsg}`);
         setLoading(false);
         return;
       }
@@ -133,23 +133,11 @@ function CheckoutForm() {
                         color: '#ef4444',
                       },
                     },
+                    hidePostalCode: false,
                   }}
                 />
               </div>
-              <p className="text-xs text-neutral-500 mt-1">Use test card: 4242 4242 4242 4242</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">ZIP Code</label>
-              <input 
-                type="text" 
-                value={zip}
-                onChange={(e) => setZip(e.target.value)}
-                className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-3 focus:outline-none focus:border-green-500 transition"
-                placeholder="12345"
-                maxLength={10}
-                required
-              />
+              <p className="text-xs text-neutral-500 mt-1">Use test card: 4242 4242 4242 4242, any future expiry/CVC, any ZIP</p>
             </div>
 
             <button 

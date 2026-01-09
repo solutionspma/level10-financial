@@ -105,12 +105,20 @@ export async function POST(request: NextRequest) {
 
   } catch (error: any) {
     console.error('Stripe payment error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      type: error.type,
+      code: error.code,
+      decline_code: error.decline_code,
+      raw: error.raw,
+    });
     
     return NextResponse.json(
       { 
         error: error.message || 'Payment processing failed',
         type: error.type,
         code: error.code,
+        decline_code: error.decline_code,
       },
       { status: 400 }
     );
