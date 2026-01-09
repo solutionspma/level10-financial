@@ -4,6 +4,7 @@ import { AuthProvider } from "@/lib/auth-context";
 import Image from "next/image";
 import FooterContent from "@/components/FooterContent";
 import Header from "@/components/Header";
+import ChatWidget from "@/components/ChatWidget";
 
 export const metadata: Metadata = {
   title: "Level 10 Financial",
@@ -23,6 +24,7 @@ export default function RootLayout({
             <Header />
             <main className="flex-1">{children}</main>
             <FooterContent />
+            <ChatWidget />
           </div>
         </AuthProvider>
       </body>
