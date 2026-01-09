@@ -3,6 +3,15 @@ export default function Privacy() {
     <div className="max-w-4xl mx-auto px-6 py-16">
       <h1 className="text-4xl font-bold mb-6">Privacy Policy</h1>
       
+      <div className="bg-green-900/20 border border-green-800 rounded-lg p-6 mb-8">
+        <h3 className="text-lg font-semibold text-green-400 mb-2">Your Consent</h3>
+        <p className="text-sm text-neutral-300">
+          By registering for an account or using Level10 Financial services, you consent to the collection, 
+          use, and sharing of your information as described in this Privacy Policy. You acknowledge that you 
+          have read and understood how we collect, use, protect, and share your personal and financial data.
+        </p>
+      </div>
+      
       <div className="space-y-6 text-neutral-300">
         <p className="text-lg">
           Level10 Financial is committed to protecting your privacy and maintaining the confidentiality 

@@ -3,6 +3,16 @@ export default function Terms() {
     <div className="max-w-4xl mx-auto px-6 py-16">
       <h1 className="text-4xl font-bold mb-6">Terms of Service</h1>
       
+      <div className="bg-green-900/20 border border-green-800 rounded-lg p-6 mb-8">
+        <h3 className="text-lg font-semibold text-green-400 mb-2">Agreement to Terms</h3>
+        <p className="text-sm text-neutral-300">
+          By creating an account, registering for services, or using the Level10 Financial platform, 
+          you acknowledge that you have read, understood, and agree to be bound by these Terms of Service, 
+          our Privacy Policy, and all other policies referenced herein. Your continued use of our services 
+          constitutes ongoing acceptance of these terms.
+        </p>
+      </div>
+      
       <div className="space-y-6 text-neutral-300">
         <p className="text-lg">
           These Terms of Service govern your use of Level10 Financial's platform and services.
