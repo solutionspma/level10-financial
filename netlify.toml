@@ -1,10 +1,10 @@
 [build]
   command = "npm run build"
   publish = ".next"
-  environment = { SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY" }
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
 [build.environment]
   NEXT_PUBLIC_PEXELS_API_KEY = "VpQgkm08WyYNjJ41qE0q7CJz3x07nfqaBTBiJyFUzQBbHdqjYlC2s7vw"
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"
