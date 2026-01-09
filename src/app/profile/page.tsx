@@ -115,40 +115,59 @@ export default function Profile() {
           </button>
         </div>
 
-        {/* KYC Information Display (Read-only) */}
-        {user.kycStatus === 'verified' && (
-          <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">Identity Verification (KYC)</h2>
+        {/* KYC Information Display */}
+        <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Identity Verification (KYC)</h2>
+            {user.kycStatus === 'verified' && user.ssn && user.dateOfBirth ? (
               <span className="bg-green-500 text-black text-xs font-bold px-3 py-1 rounded-full">VERIFIED</span>
-            </div>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-neutral-400">SSN</span>
-                <span>***-**-{user.ssn?.slice(-4) || '****'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-neutral-400">Date of Birth</span>
-                <span>{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : 'Not provided'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-neutral-400">Driver&apos;s License</span>
-                <span>{user.driversLicense || 'Not provided'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-neutral-400">License State</span>
-                <span>{user.licenseState || 'Not provided'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-neutral-400">Verified Date</span>
-                <span>{user.kycVerifiedDate ? new Date(user.kycVerifiedDate).toLocaleDateString() : 'N/A'}</span>
-              </div>
-            </div>
-            <p className="text-xs text-neutral-500 mt-4">
-              🔒 For security reasons, KYC information cannot be edited. Contact support to update.
-            </p>
+            ) : user.kycStatus === 'pending' ? (
+              <span className="bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full">PENDING</span>
+            ) : (
+              <span className="bg-neutral-700 text-neutral-300 text-xs font-bold px-3 py-1 rounded-full">NOT VERIFIED</span>
+            )}
           </div>
-        )}
+          
+          {user.kycStatus === 'verified' && user.ssn && user.dateOfBirth ? (
+            <>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-neutral-400">SSN</span>
+                  <span>***-**-{user.ssn?.slice(-4) || '****'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-neutral-400">Date of Birth</span>
+                  <span>{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : 'Not provided'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-neutral-400">Driver&apos;s License</span>
+                  <span>{user.driversLicense || 'Not provided'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-neutral-400">License State</span>
+                  <span>{user.licenseState || 'Not provided'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-neutral-400">Verified Date</span>
+                  <span>{user.kycVerifiedDate ? new Date(user.kycVerifiedDate).toLocaleDateString() : 'N/A'}</span>
+                </div>
+              </div>
+              <p className="text-xs text-neutral-500 mt-4">
+                🔒 For security reasons, KYC information cannot be edited. Contact support to update.
+              </p>
+            </>
+          ) : (
+            <div className="text-center py-6">
+              <p className="text-neutral-400 mb-4">Identity verification is required to access credit analysis and funding opportunities.</p>
+              <button 
+                onClick={() => router.push('/kyc')}
+                className="bg-green-500 text-black px-6 py-2 rounded-lg font-semibold hover:bg-green-600 transition"
+              >
+                Complete Verification
+              </button>
+            </div>
+          )}
+        </div>
 
         <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
           <h2 className="text-xl font-semibold mb-4">Business Information</h2>

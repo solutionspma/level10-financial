@@ -4,35 +4,61 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import Image from 'next/image';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
-export default function PaymentPage() {
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+
+function CheckoutForm() {
   const router = useRouter();
   const { user, updateUser } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    cardNumber: '',
-    expiry: '',
-    cvc: '',
-    zip: '',
-  });
+  const [zip, setZip] = useState('');
+  const stripe = useStripe();
+  const elements = useElements();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!stripe || !elements) {
+      return;
+    }
+
     setLoading(true);
 
     try {
-      // Call Stripe payment API
+      const cardElement = elements.getElement(CardElement);
+      
+      if (!cardElement) {
+        throw new Error('Card element not found');
+      }
+
+      // Create payment method
+      const { error, paymentMethod } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement,
+        billing_details: {
+          email: user?.email,
+          address: {
+            postal_code: zip,
+          },
+        },
+      });
+
+      if (error) {
+        alert(`Payment failed: ${error.message}`);
+        setLoading(false);
+        return;
+      }
+
+      // Call backend with payment method ID
       const response = await fetch('/api/create-payment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: 1000, // $10.00 in cents
-          cardNumber: formData.cardNumber,
-          expiry: formData.expiry,
-          cvc: formData.cvc,
-          zip: formData.zip,
+          paymentMethodId: paymentMethod.id,
           email: user?.email,
         }),
       });
@@ -52,6 +78,7 @@ export default function PaymentPage() {
         subscriptionAmount: 10,
         nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         stripeCustomerId: data.customerId,
+        stripeSubscriptionId: data.subscriptionId,
         lastPaymentDate: new Date().toISOString(),
       });
 
@@ -63,11 +90,6 @@ export default function PaymentPage() {
       setLoading(false);
     }
   };
-
-  if (!user) {
-    router.push('/login');
-    return null;
-  }
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
@@ -95,52 +117,34 @@ export default function PaymentPage() {
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Card Number</label>
-              <input 
-                type="text" 
-                value={formData.cardNumber}
-                onChange={(e) => setFormData({...formData, cardNumber: e.target.value})}
-                className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-3 focus:outline-none focus:border-green-500 transition"
-                placeholder="4242 4242 4242 4242"
-                maxLength={19}
-                required
-              />
+              <label className="block text-sm font-medium mb-2">Card Information</label>
+              <div className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-3">
+                <CardElement 
+                  options={{
+                    style: {
+                      base: {
+                        fontSize: '16px',
+                        color: '#ffffff',
+                        '::placeholder': {
+                          color: '#737373',
+                        },
+                      },
+                      invalid: {
+                        color: '#ef4444',
+                      },
+                    },
+                  }}
+                />
+              </div>
               <p className="text-xs text-neutral-500 mt-1">Use test card: 4242 4242 4242 4242</p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Expiry Date</label>
-                <input 
-                  type="text" 
-                  value={formData.expiry}
-                  onChange={(e) => setFormData({...formData, expiry: e.target.value})}
-                  className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-3 focus:outline-none focus:border-green-500 transition"
-                  placeholder="MM/YY"
-                  maxLength={5}
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">CVC</label>
-                <input 
-                  type="text" 
-                  value={formData.cvc}
-                  onChange={(e) => setFormData({...formData, cvc: e.target.value})}
-                  className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-3 focus:outline-none focus:border-green-500 transition"
-                  placeholder="123"
-                  maxLength={4}
-                  required
-                />
-              </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium mb-2">ZIP Code</label>
               <input 
                 type="text" 
-                value={formData.zip}
-                onChange={(e) => setFormData({...formData, zip: e.target.value})}
+                value={zip}
+                onChange={(e) => setZip(e.target.value)}
                 className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-3 focus:outline-none focus:border-green-500 transition"
                 placeholder="12345"
                 maxLength={10}
@@ -150,7 +154,7 @@ export default function PaymentPage() {
 
             <button 
               type="submit"
-              disabled={loading}
+              disabled={loading || !stripe}
               className="w-full bg-green-500 text-black font-semibold py-4 rounded-lg hover:bg-green-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Processing...' : 'Pay $10 and Continue'}
@@ -211,5 +215,21 @@ export default function PaymentPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PaymentPage() {
+  const router = useRouter();
+  const { user } = useAuth();
+
+  if (!user) {
+    router.push('/login');
+    return null;
+  }
+
+  return (
+    <Elements stripe={stripePromise}>
+      <CheckoutForm />
+    </Elements>
   );
 }

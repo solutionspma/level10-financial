@@ -3,10 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 // This is a server-side API route for processing Stripe payments
 export async function POST(request: NextRequest) {
   try {
-    const { amount, cardNumber, expiry, cvc, zip, email } = await request.json();
+    const { paymentMethodId, email } = await request.json();
 
     // Validate required fields
-    if (!amount || !cardNumber || !expiry || !cvc || !zip || !email) {
+    if (!paymentMethodId || !email) {
       return NextResponse.json(
         { error: 'Missing required payment fields' },
         { status: 400 }
@@ -27,30 +27,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Initialize Stripe (you'll need to install: npm install stripe)
+    // Initialize Stripe
     const Stripe = require('stripe');
     const stripe = new Stripe(stripeSecretKey, {
       apiVersion: '2023-10-16',
-    });
-
-    // Parse expiry date
-    const [expMonth, expYear] = expiry.split('/').map((n: string) => n.trim());
-    
-    // Create a payment method with the card details
-    const paymentMethod = await stripe.paymentMethods.create({
-      type: 'card',
-      card: {
-        number: cardNumber.replace(/\s/g, ''),
-        exp_month: parseInt(expMonth),
-        exp_year: parseInt('20' + expYear), // Assuming YY format
-        cvc: cvc,
-      },
-      billing_details: {
-        email: email,
-        address: {
-          postal_code: zip,
-        },
-      },
     });
 
     // Create or retrieve customer
@@ -62,22 +42,26 @@ export async function POST(request: NextRequest) {
     let customer;
     if (customers.data.length > 0) {
       customer = customers.data[0];
+      // Attach payment method to existing customer
+      await stripe.paymentMethods.attach(paymentMethodId, {
+        customer: customer.id,
+      });
     } else {
       customer = await stripe.customers.create({
         email: email,
-        payment_method: paymentMethod.id,
+        payment_method: paymentMethodId,
         invoice_settings: {
-          default_payment_method: paymentMethod.id,
+          default_payment_method: paymentMethodId,
         },
       });
     }
 
-    // Create a payment intent
+    // Create a payment intent for the first payment
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount, // Amount in cents
+      amount: 1000, // $10.00 in cents
       currency: 'usd',
       customer: customer.id,
-      payment_method: paymentMethod.id,
+      payment_method: paymentMethodId,
       confirm: true,
       automatic_payment_methods: {
         enabled: true,
@@ -101,14 +85,14 @@ export async function POST(request: NextRequest) {
               name: 'Level10 Pro',
               description: 'Monthly subscription to Level10 Financial platform',
             },
-            unit_amount: amount,
+            unit_amount: 1000, // $10.00 in cents
             recurring: {
               interval: 'month',
             },
           },
         },
       ],
-      default_payment_method: paymentMethod.id,
+      default_payment_method: paymentMethodId,
     });
 
     return NextResponse.json({
