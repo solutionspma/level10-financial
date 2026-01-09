@@ -56,25 +56,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Create a payment intent for the first payment
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: 1000, // $10.00 in cents
-      currency: 'usd',
-      customer: customer.id,
-      payment_method: paymentMethodId,
-      confirm: true,
-      automatic_payment_methods: {
-        enabled: true,
-        allow_redirects: 'never',
-      },
-      description: 'Level10 Financial - Monthly Subscription',
-      metadata: {
-        email: email,
-        plan: 'Level10 Pro',
-      },
-    });
-
-    // Create subscription for recurring billing
+    // Create subscription for recurring billing (this will also charge the first payment)
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [
@@ -93,14 +75,25 @@ export async function POST(request: NextRequest) {
         },
       ],
       default_payment_method: paymentMethodId,
+      payment_behavior: 'default_incomplete',
+      payment_settings: {
+        payment_method_types: ['card'],
+        save_default_payment_method: 'on_subscription',
+      },
+      expand: ['latest_invoice.payment_intent'],
     });
 
     return NextResponse.json({
       success: true,
-      paymentIntentId: paymentIntent.id,
-      customerId: customer.id,
       subscriptionId: subscription.id,
-      message: 'Payment processed successfully',
+      customerId: customer.id,
+      clientSecret: (subscription.latest_invoice as any)?.payment_intent?.client_secret,
+      message: 'Subscription created successfully',
+    });
+      customerId: customer.id,
+      customerId: customer.id,
+      clientSecret: (subscription.latest_invoice as any)?.payment_intent?.client_secret,
+      message: 'Subscription created successfully',
     });
 
   } catch (error: any) {
