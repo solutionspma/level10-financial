@@ -40,7 +40,7 @@ export interface User {
   statesServed?: string[];
   productsOffered?: string[];
   agreementAccepted?: boolean;
-  lenderStatus?: 'pending' | 'active' | 'suspended';
+  lenderStatus?: 'pending' | 'active' | 'suspended' | 'pending_admin_review' | 'rejected';
 }
 
 interface AuthContextType {

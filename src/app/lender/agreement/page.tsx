@@ -146,65 +146,6 @@ export default function LenderAgreementPage() {
           </p>
         </div>
       </div>
-            Level10 provides the Lender with borrower profiles containing name, email, phone, business information, and bankability scores derived from soft credit inquiries. The Lender agrees to:
-          </p>
-          <ul className="list-disc ml-6 space-y-1">
-            <li>Use borrower data solely for evaluating lending opportunities presented through the Platform.</li>
-            <li>Not share, sell, or distribute borrower data to third parties without explicit written consent from Level10 and the borrower.</li>
-            <li>Maintain reasonable data security measures to protect borrower information.</li>
-            <li>Comply with all applicable federal and state privacy laws, including but not limited to the Gramm-Leach-Bliley Act (GLBA) and state consumer privacy statutes.</li>
-          </ul>
-          
-          <h3 className="text-md font-semibold text-white mt-6">4. Fair Credit Reporting Act (FCRA) Compliance</h3>
-          <p>
-            Level10 performs soft credit inquiries as a Consumer Reporting Agency (CRA) in compliance with the Fair Credit Reporting Act (FCRA). The Lender acknowledges that:
-          </p>
-          <ul className="list-disc ml-6 space-y-1">
-            <li>Borrower profiles provided by Level10 do not include full consumer credit reports.</li>
-            <li>If the Lender wishes to obtain a full credit report, the Lender must do so independently and in compliance with FCRA, including obtaining the borrower&apos;s written authorization.</li>
-            <li>The Lender is solely responsible for compliance with FCRA in connection with any credit decisions or adverse actions taken.</li>
-          </ul>
-          
-          <h3 className="text-md font-semibold text-white mt-6">5. Equal Credit Opportunity Act (ECOA) and Anti-Discrimination</h3>
-          <p>
-            The Lender agrees to comply with the Equal Credit Opportunity Act (ECOA) and all other applicable anti-discrimination laws. The Lender will not discriminate against any borrower on the basis of race, color, religion, national origin, sex, marital status, age, or any other protected class.
-          </p>
-          
-          <h3 className="text-md font-semibold text-white mt-6">6. Fees and Payment Terms</h3>
-          <p>
-            Lender participation in the Platform may be subject to subscription fees, per-lead fees, or success fees as agreed upon separately in writing. Payment terms will be specified in a separate fee schedule or statement of work.
-          </p>
-          
-          <h3 className="text-md font-semibold text-white mt-6">7. Term and Termination</h3>
-          <p>
-            This agreement begins upon acceptance and continues until terminated by either party with 30 days&apos; written notice. Upon termination, the Lender must cease using the Platform and delete or return any borrower data received through the Platform, except as required by law or regulation.
-          </p>
-          
-          <h3 className="text-md font-semibold text-white mt-6">8. Limitation of Liability</h3>
-          <p>
-            Level10 provides the Platform and borrower profiles "as is" and makes no warranties regarding the creditworthiness, accuracy, or completeness of borrower information. The Lender assumes all risk associated with lending decisions. Level10&apos;s total liability under this agreement shall not exceed the fees paid by the Lender in the preceding 12 months.
-          </p>
-          
-          <h3 className="text-md font-semibold text-white mt-6">9. Indemnification</h3>
-          <p>
-            The Lender agrees to indemnify and hold harmless Level10 from any claims, damages, or liabilities arising from the Lender&apos;s use of the Platform, lending decisions, or non-compliance with applicable laws.
-          </p>
-          
-          <h3 className="text-md font-semibold text-white mt-6">10. Governing Law</h3>
-          <p>
-            This agreement shall be governed by the laws of the State of Delaware, without regard to conflict of law principles.
-          </p>
-          
-          <h3 className="text-md font-semibold text-white mt-6">11. Entire Agreement</h3>
-          <p>
-            This agreement constitutes the entire understanding between Level10 and the Lender regarding participation in the Platform and supersedes all prior agreements or understandings, whether written or oral.
-          </p>
-          
-          <p className="mt-6 text-neutral-400 italic">
-            By clicking "Activate Lender Account" below, you acknowledge that you have read, understood, and agree to be bound by this Lender Participation Agreement.
-          </p>
-        </div>
-      </div>
 
       {/* Agreement Checkbox */}
       <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6 mb-8">
