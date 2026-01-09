@@ -28,7 +28,7 @@ export default function StartAnalysis() {
     // Simulate processing
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    updateUser({ hasAuthorizedAnalysis: true });
+    updateUser({ hasAuthorizedCredit: true });
     router.push('/dashboard-loading');
   };
 

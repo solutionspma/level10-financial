@@ -7,7 +7,7 @@ import Image from 'next/image';
 
 export default function Register() {
   const router = useRouter();
-  const { signUp } = useAuth();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -31,18 +31,21 @@ export default function Register() {
       return;
     }
 
-    try {
-      const fullName = `${formData.firstName} ${formData.lastName}`;
-      await signUp(formData.email, formData.password, fullName);
-      
-      // Mark that verification email should be sent
-      // In production, this would trigger the actual email
-      router.push('/verification-pending');
-    } catch {
-      setError('Failed to create account. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    // Create user account
+    const userData = {
+      id: Math.random().toString(36).substr(2, 9),
+      email: formData.email,
+      name: `${formData.firstName} ${formData.lastName}`,
+      role: 'public' as const,
+      hasAuthorizedCredit: false,
+      kycStatus: 'none' as const,
+      emailVerified: false,
+    };
+
+    login(userData);
+    
+    // Redirect to verification pending
+    router.push('/verification-pending');
   };
 
   return (

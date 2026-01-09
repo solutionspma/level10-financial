@@ -11,7 +11,7 @@ export default function DashboardLoading() {
   const [message, setMessage] = useState('Preparing your profile...');
 
   useEffect(() => {
-    if (!user || !user.hasAuthorizedAnalysis) {
+    if (!user || !user.hasAuthorizedCredit) {
       router.push('/start-analysis');
       return;
     }

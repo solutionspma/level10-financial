@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function Roadmap() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
@@ -116,6 +118,38 @@ export default function Roadmap() {
           <div className="bg-blue-500 h-3 rounded-full" style={{width: '35%'}}></div>
         </div>
         <p className="text-sm text-neutral-300">35% complete • On track for lender matching in 6-8 weeks</p>
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="mt-8 pt-8 border-t border-neutral-800">
+        <div className="grid md:grid-cols-3 gap-4">
+          <Link
+            href="/dashboard"
+            className="bg-neutral-900 border border-neutral-700 rounded-xl p-6 hover:border-green-500 transition group text-center"
+          >
+            <div className="text-3xl mb-3">📊</div>
+            <h3 className="text-lg font-semibold mb-2 group-hover:text-green-400 transition">Back to Dashboard</h3>
+            <p className="text-sm text-neutral-400">Return to your main bankability overview</p>
+          </Link>
+
+          <Link
+            href="/credit"
+            className="bg-neutral-900 border border-neutral-700 rounded-xl p-6 hover:border-green-500 transition group text-center"
+          >
+            <div className="text-3xl mb-3">📈</div>
+            <h3 className="text-lg font-semibold mb-2 group-hover:text-green-400 transition">View Full Credit Analysis</h3>
+            <p className="text-sm text-neutral-400">Deep dive into your credit profile and scores</p>
+          </Link>
+
+          <Link
+            href="/funding"
+            className="bg-neutral-900 border border-neutral-700 rounded-xl p-6 hover:border-green-500 transition group text-center"
+          >
+            <div className="text-3xl mb-3">💰</div>
+            <h3 className="text-lg font-semibold mb-2 group-hover:text-green-400 transition">Explore Funding Options</h3>
+            <p className="text-sm text-neutral-400">Discover matched lenders and products</p>
+          </Link>
+        </div>
       </div>
     </div>
   );

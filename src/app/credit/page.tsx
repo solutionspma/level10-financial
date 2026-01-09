@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function Credit() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
@@ -88,6 +90,38 @@ export default function Credit() {
           <li>• Dispute late payment on Auto Loan from 2023 (if inaccurate)</li>
           <li>• Request credit limit increase on Chase Freedom (improves utilization ratio)</li>
         </ul>
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="mt-8 pt-8 border-t border-neutral-800">
+        <div className="grid md:grid-cols-3 gap-4">
+          <Link
+            href="/dashboard"
+            className="bg-neutral-900 border border-neutral-700 rounded-xl p-6 hover:border-green-500 transition group text-center"
+          >
+            <div className="text-3xl mb-3">📊</div>
+            <h3 className="text-lg font-semibold mb-2 group-hover:text-green-400 transition">Back to Dashboard</h3>
+            <p className="text-sm text-neutral-400">Return to your main bankability overview</p>
+          </Link>
+
+          <Link
+            href="/roadmap"
+            className="bg-neutral-900 border border-neutral-700 rounded-xl p-6 hover:border-green-500 transition group text-center"
+          >
+            <div className="text-3xl mb-3">🗺️</div>
+            <h3 className="text-lg font-semibold mb-2 group-hover:text-green-400 transition">See Your Roadmap</h3>
+            <p className="text-sm text-neutral-400">Step-by-step path to improve your bankability</p>
+          </Link>
+
+          <Link
+            href="/funding"
+            className="bg-neutral-900 border border-neutral-700 rounded-xl p-6 hover:border-green-500 transition group text-center"
+          >
+            <div className="text-3xl mb-3">💰</div>
+            <h3 className="text-lg font-semibold mb-2 group-hover:text-green-400 transition">Explore Funding Options</h3>
+            <p className="text-sm text-neutral-400">Discover matched lenders and products</p>
+          </Link>
+        </div>
       </div>
     </div>
   );

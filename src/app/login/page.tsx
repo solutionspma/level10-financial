@@ -7,7 +7,7 @@ import Image from 'next/image';
 
 export default function Login() {
   const router = useRouter();
-  const { signIn } = useAuth();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,21 +18,28 @@ export default function Login() {
     setLoading(true);
     setError('');
 
-    try {
-      await signIn(email, password);
-      
-      // Redirect based on email domain (demo logic)
-      if (email.includes('admin')) {
-        router.push('/admin');
-      } else if (email.includes('lender')) {
-        router.push('/lender');
-      } else {
-        router.push('/dashboard');
-      }
-    } catch {
-      setError('Failed to sign in. Please try again.');
-    } finally {
-      setLoading(false);
+    // Demo login - create user object
+    const userData = {
+      id: Math.random().toString(36).substr(2, 9),
+      email: email,
+      name: email.split('@')[0],
+      role: email.includes('lender') ? 'lender' as const : 
+            email.includes('admin') ? 'admin' as const : 
+            'public' as const,
+      hasAuthorizedCredit: true,
+      kycStatus: 'verified' as const,
+      emailVerified: true,
+    };
+
+    login(userData);
+    
+    // Redirect based on role
+    if (userData.role === 'admin') {
+      router.push('/admin');
+    } else if (userData.role === 'lender') {
+      router.push('/lender/dashboard');
+    } else {
+      router.push('/dashboard');
     }
   };
 

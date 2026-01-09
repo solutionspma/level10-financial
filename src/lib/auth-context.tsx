@@ -1,25 +1,30 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
 
-interface User {
+export type UserRole = 'public' | 'lender' | 'admin';
+
+export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'user' | 'lender' | 'admin';
-  hasAuthorizedAnalysis?: boolean;
-  hasVerifiedIdentity?: boolean;
-  isBusinessFunding?: boolean;
+  role: UserRole;
+  hasAuthorizedCredit?: boolean;
+  kycStatus?: 'none' | 'pending' | 'verified';
   emailVerified?: boolean;
-  verificationSent?: boolean;
+  // Lender-specific fields
+  organizationName?: string;
+  lenderType?: 'bank' | 'cdfi' | 'fintech' | 'private';
+  statesServed?: string[];
+  productsOffered?: string[];
+  agreementAccepted?: boolean;
+  lenderStatus?: 'pending' | 'active' | 'suspended';
 }
 
 interface AuthContextType {
   user: User | null;
-  loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, name: string) => Promise<void>;
-  signOut: () => void;
+  login: (userData: User) => void;
+  logout: () => void;
   updateUser: (updates: Partial<User>) => void;
 }
 
@@ -27,62 +32,19 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(() => {
-    // Check for existing session on mount
     if (typeof window !== 'undefined') {
       const storedUser = localStorage.getItem('level10_user');
       return storedUser ? JSON.parse(storedUser) : null;
     }
     return null;
   });
-  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    // Effect for future real-time sync if needed
-  }, []);
-
-  const signIn = async (email: string, _password: string) => {
-    // Demo auth - just check if email exists
-    setLoading(true);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Determine role based on email
-    let role: 'user' | 'lender' | 'admin' = 'user';
-    if (email.includes('lender')) role = 'lender';
-    if (email.includes('admin')) role = 'admin';
-    
-    const demoUser: User = {
-      id: crypto.randomUUID(),
-      email,
-      name: email.split('@')[0],
-      role,
-    };
-    
-    localStorage.setItem('level10_user', JSON.stringify(demoUser));
-    setUser(demoUser);
-    setLoading(false);
+  const login = (userData: User) => {
+    localStorage.setItem('level10_user', JSON.stringify(userData));
+    setUser(userData);
   };
 
-  const signUp = async (email: string, password: string, name: string) => {
-    setLoading(true);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    const demoUser: User = {
-      id: crypto.randomUUID(),
-      email,
-      name,
-      role: 'user',
-    };
-    
-    localStorage.setItem('level10_user', JSON.stringify(demoUser));
-    setUser(demoUser);
-    setLoading(false);
-  };
-
-  const signOut = () => {
+  const logout = () => {
     localStorage.removeItem('level10_user');
     setUser(null);
   };
@@ -96,7 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, updateUser }}>
+    <AuthContext.Provider value={{ user, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
