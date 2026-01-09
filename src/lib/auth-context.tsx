@@ -23,6 +23,9 @@ export interface User {
   subscriptionPlan?: string;
   subscriptionAmount?: number;
   nextBillingDate?: string;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
+  lastPaymentDate?: string;
   // Personal fields
   firstName?: string;
   lastName?: string;

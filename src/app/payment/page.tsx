@@ -20,19 +20,48 @@ export default function PaymentPage() {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      // Call Stripe payment API
+      const response = await fetch('/api/create-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: 1000, // $10.00 in cents
+          cardNumber: formData.cardNumber,
+          expiry: formData.expiry,
+          cvc: formData.cvc,
+          zip: formData.zip,
+          email: user?.email,
+        }),
+      });
 
-    // Update user with payment status
-    updateUser({ 
-      subscriptionStatus: 'active',
-      subscriptionPlan: 'Level10 Pro',
-      subscriptionAmount: 10,
-      nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    });
+      const data = await response.json();
 
-    // Redirect to start analysis
-    router.push('/start-analysis');
+      if (!response.ok || data.error) {
+        alert(`Payment failed: ${data.error || 'Unknown error'}`);
+        setLoading(false);
+        return;
+      }
+
+      // Payment successful - update user
+      updateUser({ 
+        subscriptionStatus: 'active',
+        subscriptionPlan: 'Level10 Pro',
+        subscriptionAmount: 10,
+        nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        stripeCustomerId: data.customerId,
+        lastPaymentDate: new Date().toISOString(),
+      });
+
+      // Redirect to start analysis
+      router.push('/start-analysis');
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert('Payment processing failed. Please try again.');
+      setLoading(false);
+    }
   };
 
   if (!user) {

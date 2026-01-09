@@ -81,8 +81,22 @@ export default function Dashboard() {
         <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/95 via-neutral-950/80 to-transparent" />
         <div className="absolute inset-0 flex items-center px-10">
           <div>
-            <h1 className="text-4xl font-bold text-white mb-2">Bankability Dashboard</h1>
+            <h1 className="text-4xl font-bold text-white mb-2">Welcome back, {user.firstName || user.name?.split(' ')[0] || 'there'}!</h1>
             <p className="text-lg text-neutral-200">Your complete financial health overview</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Demo Data Notice */}
+      <div className="bg-yellow-900/20 border border-yellow-700 rounded-xl p-4 mb-6">
+        <div className="flex items-start gap-3">
+          <span className="text-2xl">⚠️</span>
+          <div>
+            <h3 className="font-semibold text-yellow-400 mb-1">Demo Data Displayed</h3>
+            <p className="text-sm text-neutral-300">
+              You are viewing sample bankability data. Your real credit analysis will appear here once MicroBilt API integration is activated (awaiting production credentials). 
+              <strong className="text-white">Your payment of $10 has been processed successfully</strong> - you'll receive real data as soon as the integration goes live.
+            </p>
           </div>
         </div>
       </div>
@@ -91,7 +105,7 @@ export default function Dashboard() {
         <div className="bg-gradient-to-br from-green-900 to-green-950 border border-green-800 rounded-xl p-6">
           <div className="text-sm text-green-400 mb-1">Level10 Score</div>
           <div className="text-5xl font-bold text-white mb-2">7.8</div>
-          <div className="text-xs text-neutral-300">Strong bankability</div>
+          <div className="text-xs text-neutral-300">Strong bankability (Sample)</div>
         </div>
 
         <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">

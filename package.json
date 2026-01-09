@@ -19,6 +19,7 @@
     "pexels": "^1.4.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "stripe": "^20.1.2",
     "zustand": "^5.0.9"
   },
   "devDependencies": {
