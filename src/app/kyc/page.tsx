@@ -20,18 +20,24 @@ export default function KYCPage() {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate KYC verification
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      // Simulate KYC verification
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // Update user with KYC data
-    updateUser({ 
-      ssn: formData.ssn,
-      dateOfBirth: formData.dob,
-      driversLicense: formData.driversLicense,
-      licenseState: formData.licenseState,
-      kycStatus: 'verified',
-      kycVerifiedDate: new Date().toISOString(),
-    });
+      // Update user with KYC data
+      await updateUser({ 
+        ssn: formData.ssn,
+        dateOfBirth: formData.dob,
+        driversLicense: formData.driversLicense,
+        licenseState: formData.licenseState,
+        kycStatus: 'verified',
+        kycVerifiedDate: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Error updating KYC data:', error);
+      setLoading(false);
+      return;
+    }
 
     // Redirect to payment
     router.push('/payment');

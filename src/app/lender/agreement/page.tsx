@@ -27,7 +27,7 @@ export default function LenderAgreementPage() {
     
     setLoading(true);
 
-    // Create lender account
+    // Create lender account with pending status
     login({
       id: Math.random().toString(36).substr(2, 9),
       email: signupData.email,
@@ -40,14 +40,14 @@ export default function LenderAgreementPage() {
       statesServed: signupData.statesServed,
       productsOffered: signupData.productsOffered,
       agreementAccepted: true,
-      lenderStatus: 'pending_admin_review',
+      lenderStatus: 'pending', // Set to pending for admin review
     });
 
     // Clear signup data
     sessionStorage.removeItem('lender_signup_data');
 
-    // Redirect to pending status page
-    router.push('/lender/dashboard');
+    // Redirect to verification pending page
+    router.push('/verification-pending');
   };
 
   if (!signupData) {

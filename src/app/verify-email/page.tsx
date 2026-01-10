@@ -25,14 +25,19 @@ export default function VerifyEmailPage() {
     }
 
     // Simulate verification (in production, this would call an API)
-    setTimeout(() => {
-      updateUser({ emailVerified: true });
-      setStatus('success');
-      
-      // Redirect to dashboard after 2 seconds
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 2000);
+    setTimeout(async () => {
+      try {
+        await updateUser({ emailVerified: true });
+        setStatus('success');
+        
+        // Redirect to dashboard after 2 seconds
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 2000);
+      } catch (error) {
+        console.error('Error verifying email:', error);
+        setStatus('error');
+      }
     }, 1000);
   }, [updateUser, router]);
 

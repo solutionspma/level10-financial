@@ -35,24 +35,34 @@ export default function Profile() {
     });
   }, [user, router]);
 
-  const handleSavePersonal = () => {
-    updateUser({
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      name: `${formData.firstName} ${formData.lastName}`,
-      email: formData.email,
-      phone: formData.phone,
-    });
-    alert('Personal information updated successfully!');
+  const handleSavePersonal = async () => {
+    try {
+      await updateUser({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        phone: formData.phone,
+      });
+      alert('Personal information updated successfully!');
+    } catch (error) {
+      console.error('Error updating personal info:', error);
+      alert('Failed to update personal information. Please try again.');
+    }
   };
 
-  const handleSaveBusiness = () => {
-    updateUser({
-      businessName: formData.businessName,
-      ein: formData.ein,
-      industry: formData.industry,
-    });
-    alert('Business information updated successfully!');
+  const handleSaveBusiness = async () => {
+    try {
+      await updateUser({
+        businessName: formData.businessName,
+        ein: formData.ein,
+        industry: formData.industry,
+      });
+      alert('Business information updated successfully!');
+    } catch (error) {
+      console.error('Error updating business info:', error);
+      alert('Failed to update business information. Please try again.');
+    }
   };
 
   if (!user) return null;

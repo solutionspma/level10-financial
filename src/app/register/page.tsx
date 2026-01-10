@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { supabase } from '@/lib/supabase';
 import Image from 'next/image';
 
 export default function Register() {
@@ -19,6 +20,7 @@ export default function Register() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [useSupabaseAuth, setUseSupabaseAuth] = useState(true);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,25 +33,92 @@ export default function Register() {
       return;
     }
 
-    // Create user account
-    const userData = {
-      id: Math.random().toString(36).substr(2, 9),
-      email: formData.email,
-      name: `${formData.firstName} ${formData.lastName}`,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      phone: formData.phone,
-      role: 'public' as const,
-      hasAuthorizedCredit: false,
-      kycStatus: 'none' as const,
-      emailVerified: false,
-      subscriptionStatus: 'none' as const,
-    };
+    try {
+      if (useSupabaseAuth) {
+        // Real Supabase Auth Registration
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            data: {
+              first_name: formData.firstName,
+              last_name: formData.lastName,
+            }
+          }
+        });
 
-    login(userData);
-    
-    // Redirect to KYC verification
-    router.push('/kyc');
+        if (authError) {
+          throw new Error(authError.message);
+        }
+
+        if (!authData.user) {
+          throw new Error('Registration failed');
+        }
+
+        // Insert user into users table
+        const { error: insertError } = await supabase
+          .from('users')
+          .insert({
+            id: authData.user.id,
+            email: formData.email,
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            phone: formData.phone,
+            name: `${formData.firstName} ${formData.lastName}`,
+            role: 'public',
+            email_verified: false,
+            kyc_status: 'none',
+            subscription_status: 'none',
+            has_authorized_credit: false,
+          });
+
+        if (insertError) {
+          throw new Error(insertError.message);
+        }
+
+        // Load user into context
+        await login({
+          id: authData.user.id,
+          email: formData.email,
+          name: `${formData.firstName} ${formData.lastName}`,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          phone: formData.phone,
+          role: 'public',
+          hasAuthorizedCredit: false,
+          kycStatus: 'none',
+          emailVerified: false,
+          subscriptionStatus: 'none',
+        });
+
+        // Redirect to email verification notice
+        router.push('/verify-email');
+      } else {
+        // Demo mode fallback
+        const userData = {
+          id: Math.random().toString(36).substr(2, 9),
+          email: formData.email,
+          name: `${formData.firstName} ${formData.lastName}`,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          phone: formData.phone,
+          role: 'public' as const,
+          hasAuthorizedCredit: false,
+          kycStatus: 'none' as const,
+          emailVerified: false,
+          subscriptionStatus: 'none' as const,
+        };
+
+        await login(userData);
+        
+        // Redirect to KYC verification
+        router.push('/kyc');
+      }
+    } catch (err: any) {
+      console.error('Registration error:', err);
+      setError(err.message || 'Failed to create account. Please try again.');
+      setLoading(false);
+    }
   };
 
   return (
@@ -158,6 +227,15 @@ export default function Register() {
                 I agree to the <a href="/terms" className="text-green-400 hover:underline">Terms of Service</a>{' '}
                 and <a href="/privacy" className="text-green-400 hover:underline">Privacy Policy</a>
               </span>
+            </label>
+            
+            <label className="flex items-center gap-2 text-sm text-neutral-400 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={useSupabaseAuth}
+                onChange={(e) => setUseSupabaseAuth(e.target.checked)}
+              />
+              <span>Use Supabase Auth (Real Registration)</span>
             </label>
             
             <button 

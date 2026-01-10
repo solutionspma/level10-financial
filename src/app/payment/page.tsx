@@ -56,6 +56,7 @@ function CheckoutForm() {
         body: JSON.stringify({
           paymentMethodId: paymentMethod.id,
           email: user?.email,
+          userId: user?.id,
         }),
       });
 
@@ -71,15 +72,16 @@ function CheckoutForm() {
         return;
       }
 
-      // Payment successful - update user
-      updateUser({ 
+      // Payment successful - update user with data from database
+      await updateUser({ 
+        id: data.user.id,
         subscriptionStatus: 'active',
         subscriptionPlan: 'Level10 Pro',
         subscriptionAmount: 10,
-        nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        stripeCustomerId: data.customerId,
-        stripeSubscriptionId: data.subscriptionId,
-        lastPaymentDate: new Date().toISOString(),
+        nextBillingDate: data.user.next_billing_date,
+        stripeCustomerId: data.user.stripe_customer_id,
+        stripeSubscriptionId: data.user.stripe_subscription_id,
+        lastPaymentDate: data.user.last_payment_date,
       });
 
       // Redirect to start analysis

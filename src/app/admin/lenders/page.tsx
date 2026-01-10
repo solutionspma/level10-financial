@@ -1,141 +1,346 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/lib/auth-context';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth-context';
+import { supabase } from '@/lib/supabase';
 
-export default function AdminLenders() {
+interface Lender {
+  id: string;
+  email: string;
+  organization_name: string;
+  lender_type: string;
+  states_served: string[];
+  products_offered: string[];
+  lender_status: 'pending' | 'active' | 'rejected' | 'suspended';
+  created_at: string;
+}
+
+export default function AdminLendersPage() {
   const { user } = useAuth();
   const router = useRouter();
-  const [pendingLenders, setPendingLenders] = useState<any[]>([]);
-  const [activeLenders, setActiveLenders] = useState<any[]>([]);
+  const [lenders, setLenders] = useState<Lender[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [processingId, setProcessingId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user || user.role !== 'admin') {
+    if (!user) {
       router.push('/login');
       return;
     }
 
-    // Load lenders from localStorage
-    const allUsers = Object.keys(localStorage)
-      .filter(key => key.startsWith('user_'))
-      .map(key => JSON.parse(localStorage.getItem(key) || '{}'))
-      .filter(u => u.role === 'lender');
+    if (user.role !== 'admin') {
+      router.push('/login');
+      return;
+    }
 
-    setPendingLenders(allUsers.filter(l => l.lenderStatus === 'pending_admin_review'));
-    setActiveLenders(allUsers.filter(l => l.lenderStatus === 'active'));
+    loadLenders();
   }, [user, router]);
 
-  const handleApprove = (lenderId: string) => {
-    const lenderKey = `user_${lenderId}`;
-    const lender = JSON.parse(localStorage.getItem(lenderKey) || '{}');
-    lender.lenderStatus = 'active';
-    localStorage.setItem(lenderKey, JSON.stringify(lender));
-    
-    // Refresh lists
-    setPendingLenders(prev => prev.filter(l => l.id !== lenderId));
-    setActiveLenders(prev => [...prev, lender]);
+  const loadLenders = async () => {
+    try {
+      setLoading(true);
+      
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('role', 'lender')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      setLenders(data || []);
+    } catch (error) {
+      console.error('Error loading lenders:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleReject = (lenderId: string) => {
-    const lenderKey = `user_${lenderId}`;
-    const lender = JSON.parse(localStorage.getItem(lenderKey) || '{}');
-    lender.lenderStatus = 'rejected';
-    localStorage.setItem(lenderKey, JSON.stringify(lender));
-    
-    setPendingLenders(prev => prev.filter(l => l.id !== lenderId));
+  const updateLenderStatus = async (
+    lenderId: string,
+    newStatus: 'active' | 'rejected' | 'suspended'
+  ) => {
+    try {
+      setProcessingId(lenderId);
+
+      const { error } = await supabase
+        .from('users')
+        .update({
+          lender_status: newStatus,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', lenderId);
+
+      if (error) throw error;
+
+      // TODO: Send activation email when approved
+      if (newStatus === 'active') {
+        console.log(`Lender ${lenderId} activated - email should be sent`);
+      }
+
+      // Reload lenders
+      await loadLenders();
+    } catch (error) {
+      console.error('Error updating lender status:', error);
+      alert('Failed to update lender status');
+    } finally {
+      setProcessingId(null);
+    }
   };
 
-  if (!user || user.role !== 'admin') {
-    return null;
+  const getStatusBadge = (status: string) => {
+    const statusColors: Record<string, string> = {
+      pending: 'bg-yellow-100 text-yellow-800',
+      active: 'bg-green-100 text-green-800',
+      rejected: 'bg-red-100 text-red-800',
+      suspended: 'bg-gray-100 text-gray-800',
+    };
+
+    return (
+      <span
+        className={`px-2 py-1 text-xs font-semibold rounded-full ${
+          statusColors[status] || 'bg-gray-100 text-gray-800'
+        }`}
+      >
+        {status.toUpperCase()}
+      </span>
+    );
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600">Loading lenders...</div>
+      </div>
+    );
   }
 
+  const pendingLenders = lenders.filter(l => l.lender_status === 'pending');
+  const activeLenders = lenders.filter(l => l.lender_status === 'active');
+  const otherLenders = lenders.filter(
+    l => l.lender_status !== 'pending' && l.lender_status !== 'active'
+  );
+
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10">
-      <h1 className="text-4xl font-bold mb-2">Lender Management</h1>
-      <p className="text-neutral-400 mb-8">Review and approve pending lender applications</p>
-
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-yellow-900 border border-yellow-800 rounded-xl p-6">
-          <div className="text-sm text-yellow-400 mb-1">Pending Review</div>
-          <div className="text-4xl font-bold text-white">{pendingLenders.length}</div>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Lender Management</h1>
+          <p className="mt-2 text-gray-600">Review and manage lender applications</p>
         </div>
 
-        <div className="bg-green-900 border border-green-800 rounded-xl p-6">
-          <div className="text-sm text-green-400 mb-1">Active Lenders</div>
-          <div className="text-4xl font-bold text-white">{activeLenders.length}</div>
-        </div>
-
-        <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
-          <div className="text-sm text-neutral-400 mb-1">Total Commission (5%)</div>
-          <div className="text-2xl font-bold text-white">On funded deals only</div>
-        </div>
-      </div>
-
-      {/* Pending Lenders */}
-      {pendingLenders.length > 0 && (
-        <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6 mb-6">
-          <h3 className="text-xl font-semibold mb-4">⏳ Pending Lender Applications</h3>
-          <div className="space-y-3">
-            {pendingLenders.map((lender) => (
-              <div key={lender.id} className="flex items-center justify-between p-4 bg-neutral-950 rounded-lg border border-yellow-500/30">
-                <div className="flex-1">
-                  <div className="font-semibold text-lg">{lender.organizationName}</div>
-                  <div className="text-sm text-neutral-400 mt-1">
-                    <span className="capitalize">{lender.lenderType}</span> · {lender.statesServed} · {lender.productsOffered}
-                  </div>
-                  <div className="text-sm text-neutral-500 mt-1">Contact: {lender.name} ({lender.email})</div>
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => handleApprove(lender.id)}
-                    className="bg-green-500 hover:bg-green-600 text-black px-6 py-2 rounded-lg font-semibold transition"
-                  >
-                    Approve
-                  </button>
-                  <button
-                    onClick={() => handleReject(lender.id)}
-                    className="bg-red-500/10 hover:bg-red-500/20 border border-red-500 text-red-400 px-6 py-2 rounded-lg font-semibold transition"
-                  >
-                    Reject
-                  </button>
-                </div>
+        {/* Pending Lenders Section */}
+        {pendingLenders.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              Pending Review ({pendingLenders.length})
+            </h2>
+            <div className="bg-white rounded-lg shadow overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Organization
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Email
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Type
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        States
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Applied
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {pendingLenders.map((lender) => (
+                      <tr key={lender.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {lender.organization_name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {lender.email}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
+                          {lender.lender_type}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-500">
+                          {lender.states_served?.join(', ') || 'N/A'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {formatDate(lender.created_at)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                          <button
+                            onClick={() => updateLenderStatus(lender.id, 'active')}
+                            disabled={processingId === lender.id}
+                            className="text-green-600 hover:text-green-900 disabled:opacity-50"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => updateLenderStatus(lender.id, 'rejected')}
+                            disabled={processingId === lender.id}
+                            className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                          >
+                            Reject
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Active Lenders */}
-      {activeLenders.length > 0 && (
-        <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6 mb-6">
-          <h3 className="text-xl font-semibold mb-4">✅ Active Partner Lenders</h3>
-          <div className="space-y-3">
-            {activeLenders.map((lender) => (
-              <div key={lender.id} className="flex items-center justify-between p-4 bg-neutral-950 rounded-lg">
-                <div className="flex-1">
-                  <div className="font-semibold">{lender.organizationName}</div>
-                  <div className="text-sm text-neutral-400 capitalize">{lender.lenderType} Lender · {lender.statesServed}</div>
-                </div>
-                <div className="text-sm text-green-400">Active</div>
+        {/* Active Lenders Section */}
+        {activeLenders.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              Active Lenders ({activeLenders.length})
+            </h2>
+            <div className="bg-white rounded-lg shadow overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Organization
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Email
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Type
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Products
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {activeLenders.map((lender) => (
+                      <tr key={lender.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {lender.organization_name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {lender.email}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
+                          {lender.lender_type}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-500">
+                          {lender.products_offered?.slice(0, 2).join(', ') || 'N/A'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {getStatusBadge(lender.lender_status)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <button
+                            onClick={() => updateLenderStatus(lender.id, 'suspended')}
+                            disabled={processingId === lender.id}
+                            className="text-orange-600 hover:text-orange-900 disabled:opacity-50"
+                          >
+                            Suspend
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* No Silent Denials Policy */}
-      <div className="bg-blue-950 border border-blue-800 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-blue-400 mb-3">🎯 No Silent Denials Compliance</h3>
-        <p className="text-neutral-300 text-sm mb-3">
-          All partner lenders have agreed to:
-        </p>
-        <ul className="list-disc list-inside text-sm text-neutral-300 space-y-1">
-          <li>Approve, conditionally approve, or coach to approval</li>
-          <li>Never silently deny applications</li>
-          <li>Provide specific coaching feedback when not approving</li>
-          <li>Pay 5% commission on successfully funded loans only</li>
-        </ul>
+        {/* Other Lenders Section */}
+        {otherLenders.length > 0 && (
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              Other Lenders ({otherLenders.length})
+            </h2>
+            <div className="bg-white rounded-lg shadow overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Organization
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Email
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {otherLenders.map((lender) => (
+                      <tr key={lender.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {lender.organization_name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {lender.email}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {getStatusBadge(lender.lender_status)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          {lender.lender_status === 'suspended' && (
+                            <button
+                              onClick={() => updateLenderStatus(lender.id, 'active')}
+                              disabled={processingId === lender.id}
+                              className="text-green-600 hover:text-green-900 disabled:opacity-50"
+                            >
+                              Reactivate
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {lenders.length === 0 && (
+          <div className="bg-white rounded-lg shadow p-12 text-center">
+            <p className="text-gray-500">No lenders found</p>
+          </div>
+        )}
       </div>
     </div>
   );

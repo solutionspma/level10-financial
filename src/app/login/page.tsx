@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { supabase } from '@/lib/supabase';
 import Image from 'next/image';
 
 export default function Login() {
@@ -12,34 +13,107 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [useSupabaseAuth, setUseSupabaseAuth] = useState(true);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    // Demo login - create user object
-    const userData = {
-      id: Math.random().toString(36).substr(2, 9),
-      email: email,
-      name: email.split('@')[0],
-      role: email.includes('lender') ? 'lender' as const : 
-            email.includes('admin') ? 'admin' as const : 
-            'public' as const,
-      hasAuthorizedCredit: true,
-      kycStatus: 'verified' as const,
-      emailVerified: true,
-    };
+    try {
+      if (useSupabaseAuth) {
+        // Real Supabase Auth
+        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
-    login(userData);
-    
-    // Redirect based on role
-    if (userData.role === 'admin') {
-      router.push('/admin');
-    } else if (userData.role === 'lender') {
-      router.push('/lender/dashboard');
-    } else {
-      router.push('/dashboard');
+        if (authError) {
+          throw new Error(authError.message);
+        }
+
+        if (!authData.user) {
+          throw new Error('Authentication failed');
+        }
+
+        // Fetch user data from users table
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('email', email)
+          .single();
+
+        if (userError || !userData) {
+          throw new Error('User data not found');
+        }
+
+        // Load into auth context
+        await login({
+          id: userData.id,
+          email: userData.email,
+          name: userData.name || `${userData.first_name || ''} ${userData.last_name || ''}`.trim() || userData.email.split('@')[0],
+          role: userData.role,
+          hasAuthorizedCredit: userData.has_authorized_credit,
+          kycStatus: userData.kyc_status,
+          emailVerified: userData.email_verified,
+          firstName: userData.first_name,
+          lastName: userData.last_name,
+          phone: userData.phone,
+          subscriptionStatus: userData.subscription_status,
+          subscriptionPlan: userData.subscription_plan,
+          subscriptionAmount: userData.subscription_amount,
+          nextBillingDate: userData.next_billing_date,
+          stripeCustomerId: userData.stripe_customer_id,
+          stripeSubscriptionId: userData.stripe_subscription_id,
+          lastPaymentDate: userData.last_payment_date,
+          businessName: userData.business_name,
+          ein: userData.ein,
+          industry: userData.industry,
+          organizationName: userData.organization_name,
+          lenderType: userData.lender_type,
+          statesServed: userData.states_served,
+          productsOffered: userData.products_offered,
+          agreementAccepted: userData.agreement_accepted,
+          lenderStatus: userData.lender_status,
+        });
+
+        // Redirect based on role
+        if (userData.role === 'admin') {
+          router.push('/admin');
+        } else if (userData.role === 'lender') {
+          router.push('/lender/dashboard');
+        } else {
+          router.push('/dashboard');
+        }
+      } else {
+        // Demo login fallback - create user object
+        const userData = {
+          id: Math.random().toString(36).substr(2, 9),
+          email: email,
+          name: email.split('@')[0],
+          role: email.includes('lender') ? 'lender' as const : 
+                email.includes('admin') ? 'admin' as const : 
+                'public' as const,
+          hasAuthorizedCredit: true,
+          kycStatus: 'verified' as const,
+          emailVerified: true,
+        };
+
+        await login(userData);
+        
+        // Redirect based on role
+        if (userData.role === 'admin') {
+          router.push('/admin');
+        } else if (userData.role === 'lender') {
+          router.push('/lender/dashboard');
+        } else {
+          router.push('/dashboard');
+        }
+      }
+    } catch (err: any) {
+      console.error('Login error:', err);
+      setError(err.message || 'Failed to log in. Please try again.');
+      setLoading(false);
     }
   };
 
@@ -117,30 +191,43 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Demo Info */}
-        <div className="space-y-6">
+          <div className="space-y-6">
           <div className="bg-green-900/20 border border-green-800 rounded-xl p-6">
-            <h3 className="text-lg font-bold text-green-400 mb-3">✨ Demo Mode Active</h3>
-            <p className="text-sm text-neutral-300 mb-4">
-              For the meeting demo, you can log in with any email/password. Try these roles:
-            </p>
-            <div className="space-y-2 text-sm">
-              <div className="bg-neutral-900 rounded-lg p-3">
-                <div className="font-semibold text-white">User Dashboard</div>
-                <div className="text-neutral-400">Email: user@example.com</div>
-                <div className="text-neutral-400">Password: any</div>
-              </div>
-              <div className="bg-neutral-900 rounded-lg p-3">
-                <div className="font-semibold text-white">Lender Portal</div>
-                <div className="text-neutral-400">Email: lender@example.com</div>
-                <div className="text-neutral-400">Password: any</div>
-              </div>
-              <div className="bg-neutral-900 rounded-lg p-3">
-                <div className="font-semibold text-white">Admin Dashboard</div>
-                <div className="text-neutral-400">Email: admin@example.com</div>
-                <div className="text-neutral-400">Password: any</div>
-              </div>
-            </div>
+            <h3 className="text-lg font-bold text-green-400 mb-3">✨ Authentication Mode</h3>
+            <label className="flex items-center gap-2 cursor-pointer mb-4">
+              <input
+                type="checkbox"
+                checked={useSupabaseAuth}
+                onChange={(e) => setUseSupabaseAuth(e.target.checked)}
+                className="w-4 h-4"
+              />
+              <span className="text-sm text-neutral-300">Use Supabase Auth (Real)</span>
+            </label>
+            
+            {!useSupabaseAuth && (
+              <>
+                <p className="text-sm text-neutral-300 mb-4">
+                  For the demo, you can log in with any email/password. Try these roles:
+                </p>
+                <div className="space-y-2 text-sm">
+                  <div className="bg-neutral-900 rounded-lg p-3">
+                    <div className="font-semibold text-white">User Dashboard</div>
+                    <div className="text-neutral-400">Email: user@example.com</div>
+                    <div className="text-neutral-400">Password: any</div>
+                  </div>
+                  <div className="bg-neutral-900 rounded-lg p-3">
+                    <div className="font-semibold text-white">Lender Portal</div>
+                    <div className="text-neutral-400">Email: lender@example.com</div>
+                    <div className="text-neutral-400">Password: any</div>
+                  </div>
+                  <div className="bg-neutral-900 rounded-lg p-3">
+                    <div className="font-semibold text-white">Admin Dashboard</div>
+                    <div className="text-neutral-400">Email: admin@example.com</div>
+                    <div className="text-neutral-400">Password: any</div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
           <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">

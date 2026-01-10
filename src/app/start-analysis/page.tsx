@@ -25,11 +25,16 @@ export default function StartAnalysis() {
 
     setLoading(true);
     
-    // Simulate processing
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    updateUser({ hasAuthorizedCredit: true });
-    router.push('/dashboard-loading');
+    try {
+      // Simulate processing
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      await updateUser({ hasAuthorizedCredit: true });
+      router.push('/dashboard-loading');
+    } catch (error) {
+      console.error('Error updating credit authorization:', error);
+      setLoading(false);
+    }
   };
 
   if (!user) return null;

@@ -21,6 +21,52 @@ export default function LenderDashboardPage() {
     return null;
   }
 
+  // Show pending approval message if lender is not active
+  if (user.lenderStatus !== 'active') {
+    return (
+      <section className="max-w-4xl mx-auto px-6 py-20">
+        <div className="bg-neutral-900 border border-yellow-500/30 rounded-xl p-12 text-center">
+          <div className="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          
+          <h1 className="text-3xl font-bold mb-4">Awaiting Admin Approval</h1>
+          <p className="text-lg text-neutral-400 mb-6">
+            Your lender application is under review by our admin team. You will receive an email notification once your account has been approved.
+          </p>
+          
+          <div className="bg-neutral-950 border border-neutral-800 rounded-lg p-6 text-left max-w-md mx-auto">
+            <h3 className="font-semibold mb-3">What happens next?</h3>
+            <ul className="space-y-2 text-sm text-neutral-400">
+              <li className="flex items-start gap-2">
+                <span className="text-green-500 mt-0.5">✓</span>
+                <span>Admin team reviews your application</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500 mt-0.5">✓</span>
+                <span>You receive approval confirmation email</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500 mt-0.5">✓</span>
+                <span>Access to full lender dashboard unlocked</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500 mt-0.5">✓</span>
+                <span>Start receiving qualified borrower matches</span>
+              </li>
+            </ul>
+          </div>
+
+          <p className="text-sm text-neutral-500 mt-8">
+            Questions? Contact support at <a href="mailto:support@level10.financial" className="text-green-400 hover:underline">support@level10.financial</a>
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="max-w-6xl mx-auto px-6 py-20">
       {/* Header */}
@@ -32,11 +78,6 @@ export default function LenderDashboardPage() {
               Qualified borrower profiles will appear here once applicants match your criteria.
             </p>
           </div>
-          {user.lenderStatus === 'pending_admin_review' && (
-            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg px-4 py-2">
-              <span className="text-yellow-500 text-sm font-medium">⏳ Pending Admin Review</span>
-            </div>
-          )}
         </div>
       </div>
 
