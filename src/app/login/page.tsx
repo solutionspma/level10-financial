@@ -86,28 +86,107 @@ export default function Login() {
           router.push('/dashboard');
         }
       } else {
-        // Demo login fallback - create user object
-        const userData = {
-          id: Math.random().toString(36).substr(2, 9),
-          email: email,
-          name: email.split('@')[0],
-          role: email.includes('lender') ? 'lender' as const : 
-                email.includes('admin') ? 'admin' as const : 
-                'public' as const,
-          hasAuthorizedCredit: true,
-          kycStatus: 'verified' as const,
-          emailVerified: true,
-        };
+        // Demo login fallback - BUT check Supabase first
+        try {
+          const { data: existingUser } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', email)
+            .single();
 
-        await login(userData);
-        
-        // Redirect based on role
-        if (userData.role === 'admin') {
-          router.push('/admin');
-        } else if (userData.role === 'lender') {
-          router.push('/lender/dashboard');
-        } else {
-          router.push('/dashboard');
+          if (existingUser) {
+            // User exists in Supabase, load their real data
+            await login({
+              id: existingUser.id,
+              email: existingUser.email,
+              name: existingUser.name || `${existingUser.first_name || ''} ${existingUser.last_name || ''}`.trim() || existingUser.email.split('@')[0],
+              role: existingUser.role,
+              hasAuthorizedCredit: existingUser.has_authorized_credit,
+              kycStatus: existingUser.kyc_status,
+              emailVerified: existingUser.email_verified,
+              firstName: existingUser.first_name,
+              lastName: existingUser.last_name,
+              phone: existingUser.phone,
+              subscriptionStatus: existingUser.subscription_status,
+              subscriptionPlan: existingUser.subscription_plan,
+              subscriptionAmount: existingUser.subscription_amount,
+              nextBillingDate: existingUser.next_billing_date,
+              stripeCustomerId: existingUser.stripe_customer_id,
+              stripeSubscriptionId: existingUser.stripe_subscription_id,
+              lastPaymentDate: existingUser.last_payment_date,
+              businessName: existingUser.business_name,
+              ein: existingUser.ein,
+              industry: existingUser.industry,
+              ssn: existingUser.ssn_last_4,
+              dateOfBirth: existingUser.date_of_birth,
+              driversLicense: existingUser.drivers_license,
+              licenseState: existingUser.license_state,
+              organizationName: existingUser.organization_name,
+              lenderType: existingUser.lender_type,
+              statesServed: existingUser.states_served,
+              productsOffered: existingUser.products_offered,
+              agreementAccepted: existingUser.agreement_accepted,
+              lenderStatus: existingUser.lender_status,
+            });
+            
+            // Redirect based on role
+            if (existingUser.role === 'admin') {
+              router.push('/admin');
+            } else if (existingUser.role === 'lender') {
+              router.push('/lender/dashboard');
+            } else {
+              router.push('/dashboard');
+            }
+          } else {
+            // Truly new demo user
+            const userData = {
+              id: Math.random().toString(36).substr(2, 9),
+              email: email,
+              name: email.split('@')[0],
+              role: email.includes('lender') ? 'lender' as const : 
+                    email.includes('admin') ? 'admin' as const : 
+                    'public' as const,
+              hasAuthorizedCredit: true,
+              kycStatus: 'verified' as const,
+              emailVerified: true,
+            };
+
+            await login(userData);
+            
+            // Redirect based on role
+            if (userData.role === 'admin') {
+              router.push('/admin');
+            } else if (userData.role === 'lender') {
+              router.push('/lender/dashboard');
+            } else {
+              router.push('/dashboard');
+            }
+          }
+        } catch (err: any) {
+          console.error('Demo login error:', err);
+          // Fallback to pure demo mode
+          const userData = {
+            id: Math.random().toString(36).substr(2, 9),
+            email: email,
+            name: email.split('@')[0],
+            role: email.includes('lender') ? 'lender' as const : 
+                  email.includes('admin') ? 'admin' as const : 
+                  'public' as const,
+            hasAuthorizedCredit: true,
+            kycStatus: 'verified' as const,
+            emailVerified: true,
+          };
+
+          await login(userData);
+          
+          // Redirect based on role
+          if (userData.role === 'admin') {
+            router.push('/admin');
+          } else if (userData.role === 'lender') {
+            router.push('/lender/dashboard');
+          } else {
+            router.push('/dashboard');
+          }
         }
       }
     } catch (err: any) {

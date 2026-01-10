@@ -3,9 +3,10 @@
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
 
 export default function Profile() {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, login } = useAuth();
   const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: '',
@@ -16,6 +17,7 @@ export default function Profile() {
     ein: '',
     industry: '',
   });
+  const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -23,17 +25,92 @@ export default function Profile() {
       return;
     }
     
-    // Populate form with user data
-    setFormData({
-      firstName: user.firstName || user.name?.split(' ')[0] || '',
-      lastName: user.lastName || user.name?.split(' ').slice(1).join(' ') || '',
-      email: user.email || '',
-      phone: user.phone || '',
-      businessName: user.businessName || '',
-      ein: user.ein || '',
-      industry: user.industry || 'Professional Services',
-    });
-  }, [user, router]);
+    // Auto-sync user data from Supabase on mount
+    syncUserData();
+  }, [user?.email, router]);
+
+  const syncUserData = async () => {
+    if (!user?.email) return;
+    
+    try {
+      setSyncing(true);
+      // Try to find user in Supabase by email
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('email', user.email)
+        .single();
+
+      if (!error && data) {
+        // Update local user with Supabase data
+        const updatedUser = {
+          id: data.id,
+          email: data.email,
+          name: data.name || `${data.first_name || ''} ${data.last_name || ''}`.trim() || data.email.split('@')[0],
+          firstName: data.first_name,
+          lastName: data.last_name,
+          phone: data.phone,
+          role: data.role,
+          hasAuthorizedCredit: data.has_authorized_credit,
+          kycStatus: data.kyc_status,
+          emailVerified: data.email_verified,
+          ssn: data.ssn_last_4,
+          dateOfBirth: data.date_of_birth,
+          driversLicense: data.drivers_license,
+          licenseState: data.license_state,
+          kycVerifiedDate: data.kyc_verified_date,
+          subscriptionStatus: data.subscription_status,
+          subscriptionPlan: data.subscription_plan,
+          subscriptionAmount: data.subscription_amount,
+          nextBillingDate: data.next_billing_date,
+          stripeCustomerId: data.stripe_customer_id,
+          stripeSubscriptionId: data.stripe_subscription_id,
+          lastPaymentDate: data.last_payment_date,
+          businessName: data.business_name,
+          ein: data.ein,
+          industry: data.industry,
+        };
+        
+        await login(updatedUser);
+        
+        // Populate form
+        setFormData({
+          firstName: data.first_name || '',
+          lastName: data.last_name || '',
+          email: data.email || '',
+          phone: data.phone || '',
+          businessName: data.business_name || '',
+          ein: data.ein || '',
+          industry: data.industry || 'Professional Services',
+        });
+      } else {
+        // No Supabase record, use local data
+        setFormData({
+          firstName: user.firstName || user.name?.split(' ')[0] || '',
+          lastName: user.lastName || user.name?.split(' ').slice(1).join(' ') || '',
+          email: user.email || '',
+          phone: user.phone || '',
+          businessName: user.businessName || '',
+          ein: user.ein || '',
+          industry: user.industry || 'Professional Services',
+        });
+      }
+    } catch (error) {
+      console.error('Error syncing user data:', error);
+      // Fallback to local data
+      setFormData({
+        firstName: user.firstName || user.name?.split(' ')[0] || '',
+        lastName: user.lastName || user.name?.split(' ').slice(1).join(' ') || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        businessName: user.businessName || '',
+        ein: user.ein || '',
+        industry: user.industry || 'Professional Services',
+      });
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   const handleSavePersonal = async () => {
     try {
@@ -69,8 +146,19 @@ export default function Profile() {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
-      <h1 className="text-4xl font-bold mb-2">Profile Settings</h1>
-      <p className="text-neutral-400 mb-8">Manage your account and preferences</p>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-4xl font-bold mb-2">Profile Settings</h1>
+          <p className="text-neutral-400">Manage your account and preferences</p>
+        </div>
+        <button
+          onClick={syncUserData}
+          disabled={syncing}
+          className="bg-neutral-800 border border-neutral-700 px-4 py-2 rounded-lg hover:bg-neutral-700 transition disabled:opacity-50 text-sm"
+        >
+          {syncing ? 'Syncing...' : '🔄 Refresh Data'}
+        </button>
+      </div>
 
       <div className="space-y-6">
         <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
