@@ -87,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           hasAuthorizedCredit: data.has_authorized_credit,
           kycStatus: data.kyc_status || 'none',
           emailVerified: data.email_verified,
-          ssn: data.ssn,
+          ssn: data.ssn_last_4,
           dateOfBirth: data.date_of_birth,
           driversLicense: data.drivers_license,
           licenseState: data.license_state,
@@ -157,7 +157,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           hasAuthorizedCredit: data.has_authorized_credit,
           kycStatus: data.kyc_status || 'none',
           emailVerified: data.email_verified,
-          ssn: data.ssn,
+          ssn: data.ssn_last_4,
           dateOfBirth: data.date_of_birth,
           driversLicense: data.drivers_license,
           licenseState: data.license_state,
@@ -238,11 +238,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (updates.hasAuthorizedCredit !== undefined) dbUpdates.has_authorized_credit = updates.hasAuthorizedCredit;
       if (updates.kycStatus !== undefined) dbUpdates.kyc_status = updates.kycStatus;
       if (updates.emailVerified !== undefined) dbUpdates.email_verified = updates.emailVerified;
-      if (updates.ssn !== undefined) dbUpdates.ssn = updates.ssn;
       if (updates.dateOfBirth !== undefined) dbUpdates.date_of_birth = updates.dateOfBirth;
       if (updates.driversLicense !== undefined) dbUpdates.drivers_license = updates.driversLicense;
       if (updates.licenseState !== undefined) dbUpdates.license_state = updates.licenseState;
       if (updates.kycVerifiedDate !== undefined) dbUpdates.kyc_verified_date = updates.kycVerifiedDate;
+      if (updates.ssn !== undefined) dbUpdates.ssn_last_4 = updates.ssn;
       if (updates.subscriptionStatus !== undefined) dbUpdates.subscription_status = updates.subscriptionStatus;
       if (updates.subscriptionPlan !== undefined) dbUpdates.subscription_plan = updates.subscriptionPlan;
       if (updates.subscriptionAmount !== undefined) dbUpdates.subscription_amount = updates.subscriptionAmount;
