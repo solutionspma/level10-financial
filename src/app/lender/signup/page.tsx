@@ -8,6 +8,11 @@ export default function LenderSignupPage() {
   const router = useRouter();
   const { updateUser } = useAuth();
   
+  const [step, setStep] = useState<'invite' | 'form' | 'request'>('invite');
+  const [inviteCode, setInviteCode] = useState('');
+  const [inviteError, setInviteError] = useState('');
+  const [validatingCode, setValidatingCode] = useState(false);
+  
   const [formData, setFormData] = useState({
     organizationName: '',
     contactName: '',
@@ -17,23 +22,282 @@ export default function LenderSignupPage() {
     productsOffered: '',
   });
   
+  const [requestData, setRequestData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    company: '',
+    message: ''
+  });
+  
   const [loading, setLoading] = useState(false);
+  const [requestSuccess, setRequestSuccess] = useState(false);
+
+  const handleValidateInviteCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setValidatingCode(true);
+    setInviteError('');
+
+    try {
+      const response = await fetch('/api/validate-invite-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: inviteCode })
+      });
+
+      const data = await response.json();
+
+      if (data.valid) {
+        // Store the validated code for later use
+        sessionStorage.setItem('lender_invite_code', inviteCode.toUpperCase());
+        setStep('form');
+      } else {
+        setInviteError(data.error || 'Invalid invite code');
+      }
+    } catch (error) {
+      setInviteError('Failed to validate invite code. Please try again.');
+    } finally {
+      setValidatingCode(false);
+    }
+  };
+
+  const handleRequestInvite = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setInviteError('');
+
+    try {
+      const response = await fetch('/api/request-invite-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestData)
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setRequestSuccess(true);
+      } else {
+        setInviteError(data.error || 'Failed to submit request');
+      }
+    } catch (error) {
+      setInviteError('Failed to submit request. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     // Store lender data temporarily in session
-    sessionStorage.setItem('lender_signup_data', JSON.stringify(formData));
+    const dataWithInvite = {
+      ...formData,
+      inviteCode: sessionStorage.getItem('lender_invite_code')
+    };
+    sessionStorage.setItem('lender_signup_data', JSON.stringify(dataWithInvite));
     
     // Redirect to agreement
     router.push('/lender/agreement');
   };
 
+
+  // Invite Code Step
+  if (step === 'invite') {
+    return (
+      <section className="max-w-2xl mx-auto px-6 py-20">
+        <div className="mb-8 text-center">
+          <div className="text-6xl mb-4">🔐</div>
+          <h1 className="text-4xl font-bold mb-4">Lender Partner Access</h1>
+          <p className="text-xl text-neutral-400">
+            Enter your invite code to continue. Don&apos;t have one? Request access below.
+          </p>
+        </div>
+
+        <form onSubmit={handleValidateInviteCode} className="bg-neutral-900 border border-neutral-800 rounded-xl p-8">
+          <div className="mb-6">
+            <label className="block text-sm font-medium mb-2">Invite Code *</label>
+            <input
+              type="text"
+              required
+              value={inviteCode}
+              onChange={(e) => {
+                setInviteCode(e.target.value.toUpperCase());
+                setInviteError('');
+              }}
+              className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-3 text-center text-2xl font-mono tracking-wider focus:outline-none focus:border-green-500 transition"
+              placeholder="LENDER2026"
+              maxLength={20}
+            />
+            {inviteError && (
+              <p className="text-red-400 text-sm mt-2">⚠️ {inviteError}</p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={validatingCode || !inviteCode}
+            className="w-full bg-green-500 text-black py-3 rounded-lg font-semibold hover:bg-green-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {validatingCode ? 'Validating...' : 'Continue'}
+          </button>
+
+          <div className="mt-6 text-center">
+            <button
+              type="button"
+              onClick={() => setStep('request')}
+              className="text-green-400 hover:text-green-300 transition text-sm"
+            >
+              Don&apos;t have an invite code? Request one →
+            </button>
+          </div>
+        </form>
+
+        <div className="mt-8 text-center text-sm text-neutral-500">
+          <p>Already have an account? <a href="/login" className="text-green-400 hover:underline">Sign in</a></p>
+        </div>
+      </section>
+    );
+  }
+
+  // Request Invite Step
+  if (step === 'request') {
+    if (requestSuccess) {
+      return (
+        <section className="max-w-2xl mx-auto px-6 py-20">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-12 text-center">
+            <div className="text-6xl mb-4">✅</div>
+            <h2 className="text-3xl font-bold mb-4">Request Submitted!</h2>
+            <p className="text-neutral-400 mb-6">
+              We&apos;ve received your request for a lender invite code. Our team will review your application and send you an invite code within 24 hours.
+            </p>
+            <p className="text-sm text-neutral-500 mb-8">
+              Check your email at <span className="text-white font-semibold">{requestData.email}</span>
+            </p>
+            <button
+              onClick={() => {
+                setStep('invite');
+                setRequestSuccess(false);
+                setRequestData({ name: '', email: '', phone: '', company: '', message: '' });
+              }}
+              className="bg-green-500 text-black px-8 py-3 rounded-lg font-semibold hover:bg-green-600 transition"
+            >
+              Back to Login
+            </button>
+          </div>
+        </section>
+      );
+    }
+
+    return (
+      <section className="max-w-2xl mx-auto px-6 py-20">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold mb-4">Request Lender Access</h1>
+          <p className="text-xl text-neutral-400">
+            Tell us about yourself and we&apos;ll send you an invite code to join as a lending partner.
+          </p>
+        </div>
+
+        <form onSubmit={handleRequestInvite} className="bg-neutral-900 border border-neutral-800 rounded-xl p-8">
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium mb-2">Your Name *</label>
+              <input
+                type="text"
+                required
+                value={requestData.name}
+                onChange={(e) => setRequestData({ ...requestData, name: e.target.value })}
+                className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-3 focus:outline-none focus:border-green-500 transition"
+                placeholder="Jane Smith"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Work Email *</label>
+              <input
+                type="email"
+                required
+                value={requestData.email}
+                onChange={(e) => setRequestData({ ...requestData, email: e.target.value })}
+                className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-3 focus:outline-none focus:border-green-500 transition"
+                placeholder="jane@yourbank.com"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Phone</label>
+              <input
+                type="tel"
+                value={requestData.phone}
+                onChange={(e) => setRequestData({ ...requestData, phone: e.target.value })}
+                className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-3 focus:outline-none focus:border-green-500 transition"
+                placeholder="(555) 123-4567"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Company/Organization *</label>
+              <input
+                type="text"
+                required
+                value={requestData.company}
+                onChange={(e) => setRequestData({ ...requestData, company: e.target.value })}
+                className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-3 focus:outline-none focus:border-green-500 transition"
+                placeholder="First National Bank"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Tell us about your lending operation</label>
+              <textarea
+                rows={4}
+                value={requestData.message}
+                onChange={(e) => setRequestData({ ...requestData, message: e.target.value })}
+                className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-3 focus:outline-none focus:border-green-500 transition"
+                placeholder="What types of business loans do you offer? What states do you serve?"
+              />
+            </div>
+
+            {inviteError && (
+              <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+                <p className="text-red-400 text-sm">⚠️ {inviteError}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-8 flex justify-between items-center">
+            <button
+              type="button"
+              onClick={() => {
+                setStep('invite');
+                setInviteError('');
+              }}
+              className="text-neutral-400 hover:text-white transition"
+            >
+              ← Back to Invite Code
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-green-500 text-black px-8 py-3 rounded-lg font-semibold hover:bg-green-600 transition disabled:opacity-50"
+            >
+              {loading ? 'Submitting...' : 'Request Invite Code'}
+            </button>
+          </div>
+        </form>
+      </section>
+    );
+  }
+
+  // Original Form Step (after invite code validated)
   return (
     <section className="max-w-4xl mx-auto px-6 py-20">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-4">Become a Lending Partner</h1>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-black font-bold">✓</div>
+          <h1 className="text-4xl font-bold">Become a Lending Partner</h1>
+        </div>
         <p className="text-xl text-neutral-400">
           Tell us about your organization. No password required yet — we&apos;ll create your account after you review the agreement.
         </p>

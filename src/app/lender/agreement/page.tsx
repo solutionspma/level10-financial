@@ -27,27 +27,43 @@ export default function LenderAgreementPage() {
     
     setLoading(true);
 
-    // Create lender account with pending status
-    login({
-      id: Math.random().toString(36).substr(2, 9),
-      email: signupData.email,
-      name: signupData.contactName,
-      role: 'lender',
-      kycStatus: 'verified',
-      hasAuthorizedCredit: true,
-      organizationName: signupData.organizationName,
-      lenderType: signupData.lenderType,
-      statesServed: signupData.statesServed,
-      productsOffered: signupData.productsOffered,
-      agreementAccepted: true,
-      lenderStatus: 'pending', // Set to pending for admin review
-    });
+    try {
+      // Track invite code usage before creating account
+      const inviteCode = signupData.inviteCode;
+      if (inviteCode) {
+        // Note: In a real implementation, this would increment usage count
+        // For now, we'll just store it with the user
+        console.log('Lender used invite code:', inviteCode);
+      }
 
-    // Clear signup data
-    sessionStorage.removeItem('lender_signup_data');
+      // Create lender account with pending status
+      login({
+        id: Math.random().toString(36).substr(2, 9),
+        email: signupData.email,
+        name: signupData.contactName,
+        role: 'lender',
+        kycStatus: 'verified',
+        hasAuthorizedCredit: true,
+        organizationName: signupData.organizationName,
+        lenderType: signupData.lenderType,
+        statesServed: signupData.statesServed,
+        productsOffered: signupData.productsOffered,
+        agreementAccepted: true,
+        lenderStatus: 'pending', // Set to pending for admin review
+        inviteCodeUsed: inviteCode,
+      });
 
-    // Redirect to verification pending page
-    router.push('/verification-pending');
+      // Clear signup data and invite code
+      sessionStorage.removeItem('lender_signup_data');
+      sessionStorage.removeItem('lender_invite_code');
+
+      // Redirect to verification pending page
+      router.push('/verification-pending');
+    } catch (error) {
+      console.error('Error activating lender account:', error);
+      setLoading(false);
+    }
+  };
   };
 
   if (!signupData) {

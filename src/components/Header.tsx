@@ -37,7 +37,7 @@ export default function Header() {
               <Link href="/how-it-works" className="hover:text-green-400 transition">
                 How It Works
               </Link>
-              <Link href="/lenders" className="hover:text-green-400 transition">
+              <Link href="/lender/signup" className="hover:text-green-400 transition">
                 For Lenders
               </Link>
               <Link href="/pricing" className="hover:text-green-400 transition">
