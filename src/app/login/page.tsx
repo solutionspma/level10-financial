@@ -13,7 +13,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [useSupabaseAuth, setUseSupabaseAuth] = useState(false); // Changed to false by default
+  const [useSupabaseAuth, setUseSupabaseAuth] = useState(false); // Demo mode by default
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
