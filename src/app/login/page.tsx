@@ -88,13 +88,23 @@ export default function Login() {
       } else {
         // Demo login fallback - BUT check Supabase first
         try {
-          const { data: existingUser } = await supabase
+          const { data: existingUser, error: fetchError } = await supabase
             .from('users')
             .select('*')
             .eq('email', email)
-            .single();
+            .maybeSingle(); // Changed from .single() to handle multiple records
+
+          if (fetchError) {
+            console.error('Error fetching user from Supabase:', fetchError);
+          }
 
           if (existingUser) {
+            console.log('Found existing user in Supabase:', {
+              email: existingUser.email,
+              subscription_status: existingUser.subscription_status,
+              role: existingUser.role
+            });
+            
             // User exists in Supabase, load their real data
             await login({
               id: existingUser.id,
