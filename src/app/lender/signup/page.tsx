@@ -8,7 +8,7 @@ export default function LenderSignupPage() {
   const router = useRouter();
   const { updateUser } = useAuth();
   
-  const [step, setStep] = useState<'invite' | 'form' | 'request'>('invite');
+  const [step, setStep] = useState<'invite' | 'welcome' | 'form' | 'request'>('invite');
   const [inviteCode, setInviteCode] = useState('');
   const [inviteError, setInviteError] = useState('');
   const [validatingCode, setValidatingCode] = useState(false);
@@ -50,7 +50,7 @@ export default function LenderSignupPage() {
       if (data.valid) {
         // Store the validated code for later use
         sessionStorage.setItem('lender_invite_code', inviteCode.toUpperCase());
-        setStep('form');
+        setStep('welcome');
       } else {
         setInviteError(data.error || 'Invalid invite code');
       }
@@ -156,6 +156,93 @@ export default function LenderSignupPage() {
 
         <div className="mt-8 text-center text-sm text-neutral-500">
           <p>Already have an account? <a href="/login" className="text-green-400 hover:underline">Sign in</a></p>
+        </div>
+      </section>
+    );
+  }
+
+  // Welcome Step - Show value proposition
+  if (step === 'welcome') {
+    return (
+      <section className="max-w-4xl mx-auto px-6 py-20">
+        <div className="mb-12 text-center">
+          <div className="text-6xl mb-4">🎉</div>
+          <h1 className="text-5xl font-bold mb-4">Welcome to Level10 Lending</h1>
+          <p className="text-2xl text-neutral-400">
+            You&apos;re joining an exclusive network of forward-thinking lenders
+          </p>
+        </div>
+
+        <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-8 mb-8">
+          <h2 className="text-3xl font-bold mb-6 text-center">Here&apos;s What You Get</h2>
+          
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <div className="bg-neutral-950 border border-neutral-700 rounded-lg p-6">
+              <div className="text-3xl mb-3">🎯</div>
+              <h3 className="text-xl font-bold mb-2">Pre-Qualified Leads</h3>
+              <p className="text-neutral-400">
+                Only see borrowers who meet your exact criteria. No time wasted on unqualified applications.
+              </p>
+            </div>
+
+            <div className="bg-neutral-950 border border-neutral-700 rounded-lg p-6">
+              <div className="text-3xl mb-3">📊</div>
+              <h3 className="text-xl font-bold mb-2">Level10 Bankability Score</h3>
+              <p className="text-neutral-400">
+                Our proprietary scoring system analyzes real credit data and tells you exactly what needs fixing.
+              </p>
+            </div>
+
+            <div className="bg-neutral-950 border border-neutral-700 rounded-lg p-6">
+              <div className="text-3xl mb-3">💰</div>
+              <h3 className="text-xl font-bold mb-2">5% Commission on Funded Loans</h3>
+              <p className="text-neutral-400">
+                Zero upfront costs. Level10 only earns when you successfully fund. We&apos;re aligned with your success.
+              </p>
+            </div>
+
+            <div className="bg-neutral-950 border border-neutral-700 rounded-lg p-6">
+              <div className="text-3xl mb-3">🤝</div>
+              <h3 className="text-xl font-bold mb-2">No Silent Denials</h3>
+              <p className="text-neutral-400">
+                Every borrower gets feedback. You choose to approve, coach, or pass — but they always know why.
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-6 mb-8">
+            <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
+              <span>⚡</span> The Level10 Advantage
+            </h3>
+            <ul className="space-y-2 text-neutral-300">
+              <li className="flex items-start gap-2">
+                <span className="text-green-400 mt-1">✓</span>
+                <span><strong>Borrowers come ready:</strong> Credit pulled, documents uploaded, KYC verified</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-400 mt-1">✓</span>
+                <span><strong>Smart matching:</strong> See only businesses in your service area and product range</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-400 mt-1">✓</span>
+                <span><strong>Built-in coaching:</strong> Help borrowers improve before applying (or send them back with a roadmap)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-400 mt-1">✓</span>
+                <span><strong>Zero risk:</strong> No fees, no subscriptions. Commission-only after funding.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="text-center">
+            <button
+              onClick={() => setStep('form')}
+              className="bg-green-500 text-black px-12 py-4 rounded-lg font-bold text-xl hover:bg-green-600 transition"
+            >
+              Get Started →
+            </button>
+            <p className="text-sm text-neutral-500 mt-4">Takes less than 2 minutes • No payment required</p>
+          </div>
         </div>
       </section>
     );
