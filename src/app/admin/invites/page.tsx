@@ -83,7 +83,8 @@ export default function AdminInviteCodes() {
       setNewCode('');
       setNewCodeNotes('');
       loadData();
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as { message: string };
       alert('Error creating code: ' + error.message);
     }
   };
@@ -97,7 +98,7 @@ export default function AdminInviteCodes() {
 
       if (error) throw error;
       loadData();
-    } catch (error) {
+    } catch {
       alert('Error updating code status');
     }
   };
@@ -115,7 +116,7 @@ export default function AdminInviteCodes() {
 
       if (error) throw error;
       loadData();
-    } catch (error) {
+    } catch {
       alert('Error updating request status');
     }
   };

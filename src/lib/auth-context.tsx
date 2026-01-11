@@ -43,6 +43,7 @@ export interface User {
   productsOffered?: string[];
   agreementAccepted?: boolean;
   lenderStatus?: 'pending' | 'active' | 'suspended' | 'pending_admin_review' | 'rejected';
+  inviteCodeUsed?: string;
 }
 
 interface AuthContextType {

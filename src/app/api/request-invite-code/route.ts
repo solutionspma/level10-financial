@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new invite request
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('lender_invite_requests')
       .insert({
         name,

@@ -64,7 +64,6 @@ export default function LenderAgreementPage() {
       setLoading(false);
     }
   };
-  };
 
   if (!signupData) {
     return (

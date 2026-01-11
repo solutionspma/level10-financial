@@ -77,8 +77,22 @@ export async function POST(request: NextRequest) {
     const report = creditData.CreditReport || {};
     const score = report.CreditScore?.Value || 0;
     
+    interface TradeLine {
+      CreditorName?: string;
+      Balance?: number;
+      CreditLimit?: number;
+      MonthlyPayment?: number;
+      AccountStatus?: string;
+    }
+
+    interface Inquiry {
+      InquirerName?: string;
+      InquiryDate?: string;
+      InquiryType?: string;
+    }
+
     // Extract accounts
-    const accounts = (report.TradeLines || []).map((trade: any) => ({
+    const accounts = (report.TradeLines || []).map((trade: TradeLine) => ({
       name: trade.CreditorName || 'Unknown',
       balance: trade.Balance || 0,
       limit: trade.CreditLimit || 0,
@@ -87,14 +101,14 @@ export async function POST(request: NextRequest) {
     }));
 
     // Extract inquiries
-    const inquiries = (report.Inquiries || []).map((inq: any) => ({
+    const inquiries = (report.Inquiries || []).map((inq: Inquiry) => ({
       name: inq.InquirerName || 'Unknown',
       date: inq.InquiryDate || 'N/A',
       type: inq.InquiryType || 'soft',
     }));
 
     // Calculate bankability score (simplified algorithm)
-    const utilization = accounts.reduce((sum: number, acc: any) => {
+    const utilization = accounts.reduce((sum: number, acc: { balance: number; limit: number }) => {
       if (acc.limit > 0) {
         return sum + (acc.balance / acc.limit);
       }
