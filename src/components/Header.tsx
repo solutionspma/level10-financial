@@ -31,23 +31,70 @@ export default function Header() {
         </Link>
         
         <nav className="flex items-center gap-4 text-sm">
-          <Link href="/how-it-works" className="hover:text-green-400 transition">
-            How It Works
-          </Link>
-          <Link href="/lenders" className="hover:text-green-400 transition">
-            For Lenders
-          </Link>
-          <Link href="/pricing" className="hover:text-green-400 transition">
-            Pricing
-          </Link>
-          
+          {/* Public navigation - only show when NOT logged in */}
           {!user && (
-            <Link 
-              href="/login" 
-              className="bg-green-500 text-black px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
-            >
-              Login
-            </Link>
+            <>
+              <Link href="/how-it-works" className="hover:text-green-400 transition">
+                How It Works
+              </Link>
+              <Link href="/lenders" className="hover:text-green-400 transition">
+                For Lenders
+              </Link>
+              <Link href="/pricing" className="hover:text-green-400 transition">
+                Pricing
+              </Link>
+              <Link 
+                href="/login" 
+                className="bg-green-500 text-black px-4 py-2 rounded-lg hover:bg-green-600 transition font-semibold"
+              >
+                Login
+              </Link>
+            </>
+          )}
+          
+          {/* Member navigation - show when logged in as regular user */}
+          {user && user.role !== 'lender' && user.role !== 'admin' && (
+            <>
+              <Link href="/dashboard" className="hover:text-green-400 transition">
+                Dashboard
+              </Link>
+              <Link href="/documents" className="hover:text-green-400 transition">
+                Documents
+              </Link>
+              <Link href="/credit" className="hover:text-green-400 transition">
+                Credit Reports
+              </Link>
+            </>
+          )}
+          
+          {/* Lender navigation */}
+          {user && user.role === 'lender' && (
+            <>
+              <Link href="/lender/dashboard" className="hover:text-green-400 transition">
+                Dashboard
+              </Link>
+              <Link href="/lender/applications" className="hover:text-green-400 transition">
+                Applications
+              </Link>
+              <Link href="/lender/commissions" className="hover:text-green-400 transition">
+                Commissions
+              </Link>
+            </>
+          )}
+          
+          {/* Admin navigation */}
+          {user && user.role === 'admin' && (
+            <>
+              <Link href="/admin" className="hover:text-green-400 transition">
+                Admin Panel
+              </Link>
+              <Link href="/admin/users" className="hover:text-green-400 transition">
+                Users
+              </Link>
+              <Link href="/admin/payments" className="hover:text-green-400 transition">
+                Payments
+              </Link>
+            </>
           )}
           
           {user && (
