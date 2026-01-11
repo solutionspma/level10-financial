@@ -127,7 +127,7 @@ export default function LenderSignupPage() {
                 setInviteError('');
               }}
               className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-3 text-center text-2xl font-mono tracking-wider focus:outline-none focus:border-green-500 transition"
-              placeholder="LENDER2026"
+              placeholder="Enter Code"
               maxLength={20}
             />
             {inviteError && (
