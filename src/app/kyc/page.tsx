@@ -25,8 +25,12 @@ export default function KYCPage() {
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       // Update user with KYC data
+      // Extract last 4 digits for display
+      const last4 = formData.ssn.slice(-4);
+      
       await updateUser({ 
-        ssn: formData.ssn,
+        ssn: last4,
+        ssnFull: formData.ssn,
         dateOfBirth: formData.dob,
         driversLicense: formData.driversLicense,
         licenseState: formData.licenseState,
@@ -81,12 +85,12 @@ export default function KYCPage() {
                 value={formData.ssn}
                 onChange={(e) => setFormData({...formData, ssn: e.target.value.replace(/\D/g, '')})}
                 className="w-full bg-neutral-950 border border-neutral-700 rounded-lg px-4 py-3 focus:outline-none focus:border-green-500 transition"
-                placeholder="123-45-6789"
-                maxLength={11}
+                placeholder="123456789"
+                maxLength={9}
                 required
               />
               <p className="text-xs text-neutral-500 mt-1">
-                🔒 Encrypted and stored securely. Required for FCRA-compliant credit pulls.
+                🔒 Enter full 9-digit SSN. Encrypted and stored securely for MicroBilt credit bureau integration.
               </p>
             </div>
 
