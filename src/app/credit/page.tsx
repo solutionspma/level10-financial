@@ -68,7 +68,6 @@ export default function Credit() {
           firstName: user.firstName,
           lastName: user.lastName,
           dateOfBirth: user.dateOfBirth,
-          address: user.address || '',
         }),
       });
 

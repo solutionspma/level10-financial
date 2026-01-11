@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { ssn, firstName, lastName, dateOfBirth, address } = body;
+    const { ssn, firstName, lastName, dateOfBirth } = body;
 
     // Validate required fields
     if (!ssn || !firstName || !lastName || !dateOfBirth) {
@@ -62,9 +62,6 @@ export async function POST(request: NextRequest) {
             DateOfBirth: dateOfBirth,
             SSN: ssn,
           },
-          Address: address ? {
-            StreetAddress: address,
-          } : undefined,
         },
         RequestType: 'SoftPull', // Soft inquiry - doesn't affect score
       }),
