@@ -14,7 +14,8 @@ export interface User {
   kycStatus?: 'none' | 'pending' | 'verified';
   emailVerified?: boolean;
   // KYC fields
-  ssn?: string;
+  ssn?: string; // Last 4 digits for display
+  ssnFull?: string; // Full SSN for MicroBilt API calls
   dateOfBirth?: string;
   driversLicense?: string;
   licenseState?: string;
@@ -88,6 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           kycStatus: data.kyc_status || 'none',
           emailVerified: data.email_verified,
           ssn: data.ssn_last_4,
+          ssnFull: data.ssn_full,
           dateOfBirth: data.date_of_birth,
           driversLicense: data.drivers_license,
           licenseState: data.license_state,
@@ -158,6 +160,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           kycStatus: data.kyc_status || 'none',
           emailVerified: data.email_verified,
           ssn: data.ssn_last_4,
+          ssnFull: data.ssn_full,
           dateOfBirth: data.date_of_birth,
           driversLicense: data.drivers_license,
           licenseState: data.license_state,
@@ -243,6 +246,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (updates.licenseState !== undefined) dbUpdates.license_state = updates.licenseState;
       if (updates.kycVerifiedDate !== undefined) dbUpdates.kyc_verified_date = updates.kycVerifiedDate;
       if (updates.ssn !== undefined) dbUpdates.ssn_last_4 = updates.ssn;
+      if (updates.ssnFull !== undefined) dbUpdates.ssn_full = updates.ssnFull;
       if (updates.subscriptionStatus !== undefined) dbUpdates.subscription_status = updates.subscriptionStatus;
       if (updates.subscriptionPlan !== undefined) dbUpdates.subscription_plan = updates.subscriptionPlan;
       if (updates.subscriptionAmount !== undefined) dbUpdates.subscription_amount = updates.subscriptionAmount;
