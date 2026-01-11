@@ -192,11 +192,21 @@ export default function Documents() {
       </div>
 
       <div className="bg-blue-950 border border-blue-800 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-blue-400 mb-3">Document Security</h3>
-        <p className="text-neutral-300 text-sm">
-          All documents are encrypted at rest and in transit using 256-bit SSL. Your files are stored 
-          in SOC 2 compliant infrastructure and are never shared without your explicit permission.
-        </p>
+        <h3 className="text-lg font-semibold text-blue-400 mb-3">🔒 Document Security & Privacy</h3>
+        <div className="space-y-3 text-neutral-300 text-sm">
+          <div className="flex items-start gap-2">
+            <span className="text-green-400 mt-0.5">✓</span>
+            <p><strong>Private to You Only:</strong> Your documents are stored in your private folder. Other users cannot see, access, or download your files. Each account is completely isolated.</p>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="text-green-400 mt-0.5">✓</span>
+            <p><strong>Bank-Level Encryption:</strong> All documents are encrypted at rest and in transit using 256-bit SSL. Files are stored in SOC 2 compliant infrastructure.</p>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="text-green-400 mt-0.5">✓</span>
+            <p><strong>Controlled Sharing:</strong> Documents are never shared with lenders without your explicit permission. You control who sees what.</p>
+          </div>
+        </div>
       </div>
     </div>
   );
