@@ -129,12 +129,16 @@ export default function Contact() {
             <div className="space-y-4 text-neutral-300">
               <div>
                 <div className="text-sm text-neutral-500 mb-1">Email Support</div>
-                <div className="text-green-400">support@level10.financial</div>
+                <a href="mailto:solutions@pitchmarketing.agency?subject=Level10 Support Request" className="text-green-400 hover:text-green-300 transition">
+                  support@level10.financial
+                </a>
               </div>
               
               <div>
                 <div className="text-sm text-neutral-500 mb-1">Compliance Inquiries</div>
-                <div className="text-green-400">compliance@level10.financial</div>
+                <a href="mailto:solutions@pitchmarketing.agency?subject=Level10 Compliance Inquiry" className="text-green-400 hover:text-green-300 transition">
+                  compliance@level10.financial
+                </a>
               </div>
 
               <div>
