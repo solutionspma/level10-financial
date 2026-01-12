@@ -154,8 +154,14 @@ export default function Contact() {
             <p className="text-sm text-neutral-300 mb-4">
               Check out our FAQ section or chat with our AI assistant for instant help with common questions.
             </p>
-            <button className="w-full bg-green-500/10 border border-green-500/30 text-green-400 font-medium py-2 rounded-lg hover:bg-green-500/20 transition">
-              Coming Soon: AI Chat Assistant
+            <button 
+              onClick={() => {
+                const chatButton = document.querySelector('[data-chat-widget-button]') as HTMLButtonElement;
+                if (chatButton) chatButton.click();
+              }}
+              className="w-full bg-green-500/10 border border-green-500/30 text-green-400 font-medium py-2 rounded-lg hover:bg-green-500/20 transition"
+            >
+              Chat with AI Assistant
             </button>
           </div>
 

@@ -93,6 +93,7 @@ export default function ChatWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
+          data-chat-widget-button
           className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-black rounded-full p-4 shadow-2xl transition-all hover:scale-110 z-50 flex items-center gap-2"
           aria-label="Open chat"
         >

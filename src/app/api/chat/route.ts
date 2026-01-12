@@ -24,10 +24,26 @@ HOW IT WORKS:
 4. We provide a personalized roadmap with specific tasks to improve their score
 5. Users can track progress and get matched with lenders when ready
 
-PRICING:
-- $10/month subscription
-- Includes credit analysis, score tracking, lender matching, and coaching resources
-- One-time KYC verification required (SSN, date of birth, driver's license)
+PRICING (TWO TIERS):
+
+CORE PLAN - $10/month:
+- Credit readiness snapshot and analysis
+- Level10 Bankability Score
+- Educational insights and guidance
+- Monthly credit monitoring
+- 1 credit refresh per month (30-day limit)
+- Perfect for budget-conscious users getting started
+
+PRO PLAN - $29/month + $25 one-time setup fee:
+- Everything in Core, plus:
+- Unlimited credit refreshes (pull anytime)
+- Full lender matching and recommendations
+- Priority support and coaching
+- No Silent Denials™ guarantee
+- Best for active funding seekers
+- Setup fee charged only once (never again, even if you downgrade and upgrade later)
+
+One-time KYC verification required for both plans (SSN, date of birth, driver's license)
 
 FOR LENDERS:
 - Lenders can partner with us to access pre-qualified leads
