@@ -22,12 +22,13 @@ export interface User {
   kycVerifiedDate?: string;
   // Payment fields
   subscriptionStatus?: 'none' | 'active' | 'cancelled' | 'past_due';
-  subscriptionPlan?: string;
+  subscriptionPlan?: 'none' | 'core' | 'pro';
   subscriptionAmount?: number;
   nextBillingDate?: string;
   stripeCustomerId?: string;
   stripeSubscriptionId?: string;
   lastPaymentDate?: string;
+  setupFeePaid?: boolean;
   // Personal fields
   firstName?: string;
   lastName?: string;

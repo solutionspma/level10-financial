@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import Image from 'next/image';
 import { loadStripe } from '@stripe/stripe-js';
@@ -11,10 +11,35 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 
 function CheckoutForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, updateUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const stripe = useStripe();
   const elements = useElements();
+  
+  // Determine plan from URL params
+  const urlPlan = searchParams.get('plan') || searchParams.get('upgrade');
+  const selectedPlan = urlPlan === 'pro' ? 'pro' : 'core';
+  const isUpgrade = searchParams.get('upgrade') === 'pro';
+
+  const planDetails = {
+    core: {
+      name: 'Level10 Core',
+      price: 10,
+      setupFee: 0,
+      total: 10,
+      features: ['Readiness snapshot', 'Educational insights', 'Monthly credit monitoring']
+    },
+    pro: {
+      name: 'Level10 Pro',
+      price: 29,
+      setupFee: user?.setupFeePaid ? 0 : 25,
+      total: user?.setupFeePaid ? 29 : 54,
+      features: ['Full credit analysis', 'Unlimited refreshes', 'Lender matching', 'Priority coaching']
+    }
+  };
+
+  const plan = planDetails[selectedPlan];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +72,7 @@ function CheckoutForm() {
         return;
       }
 
-      // Call backend with payment method ID
+      // Call backend with payment method ID and plan details
       const response = await fetch('/api/create-payment', {
         method: 'POST',
         headers: {
@@ -57,6 +82,8 @@ function CheckoutForm() {
           paymentMethodId: paymentMethod.id,
           email: user?.email,
           userId: user?.id,
+          plan: selectedPlan,
+          isUpgrade: isUpgrade,
         }),
       });
 
@@ -76,16 +103,17 @@ function CheckoutForm() {
       await updateUser({ 
         id: data.user.id,
         subscriptionStatus: 'active',
-        subscriptionPlan: 'Level10 Pro',
-        subscriptionAmount: 10,
+        subscriptionPlan: selectedPlan,
+        subscriptionAmount: plan.price,
         nextBillingDate: data.user.next_billing_date,
         stripeCustomerId: data.user.stripe_customer_id,
         stripeSubscriptionId: data.user.stripe_subscription_id,
         lastPaymentDate: data.user.last_payment_date,
+        setupFeePaid: data.user.setup_fee_paid || user?.setupFeePaid,
       });
 
-      // Redirect to start analysis
-      router.push('/start-analysis');
+      // Redirect to start analysis or dashboard
+      router.push(isUpgrade ? '/dashboard' : '/start-analysis');
     } catch (error) {
       console.error('Payment error:', error);
       alert('Payment processing failed. Please try again.');
@@ -147,7 +175,7 @@ function CheckoutForm() {
               disabled={loading || !stripe}
               className="w-full bg-green-500 text-black font-semibold py-4 rounded-lg hover:bg-green-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Processing...' : 'Pay $10 and Continue'}
+              {loading ? 'Processing...' : `Pay $${plan.total} and Continue`}
             </button>
           </form>
 
@@ -158,33 +186,44 @@ function CheckoutForm() {
               </svg>
               <span>Secure payment powered by Stripe</span>
             </div>
+            {selectedPlan === 'pro' && !user?.setupFeePaid && (
+              <p className="text-xs text-neutral-500 mt-3">* One-time setup fee includes identity verification and initial credit analysis</p>
+            )}
           </div>
         </div>
 
         {/* Order Summary */}
         <div>
           <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-8 mb-6">
-            <h3 className="text-xl font-bold mb-6">Order Summary</h3>
+            <h3 className="text-xl font-bold mb-6">
+              {isUpgrade ? 'Upgrade Summary' : 'Order Summary'}
+            </h3>
             
             <div className="space-y-4 mb-6">
               <div className="flex justify-between">
-                <span className="text-neutral-300">Level10 Pro (Monthly)</span>
-                <span className="font-semibold">$10.00</span>
+                <span className="text-neutral-300">{plan.name} (Monthly)</span>
+                <span className="font-semibold">${plan.price.toFixed(2)}</span>
               </div>
+              {plan.setupFee > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-neutral-300">Setup Fee (one-time)</span>
+                  <span className="font-semibold">${plan.setupFee.toFixed(2)}</span>
+                </div>
+              )}
               <div className="flex justify-between text-sm text-neutral-400">
                 <span>First billing date</span>
                 <span>Today</span>
               </div>
               <div className="flex justify-between text-sm text-neutral-400">
                 <span>Next billing</span>
-                <span>Feb 8, 2026</span>
+                <span>{new Date(Date.now() + 30*24*60*60*1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
               </div>
             </div>
 
             <div className="pt-4 border-t border-neutral-800">
               <div className="flex justify-between text-lg font-bold">
                 <span>Total Due Today</span>
-                <span className="text-green-500">$10.00</span>
+                <span className="text-green-500">${plan.total.toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -192,13 +231,9 @@ function CheckoutForm() {
           <div className="bg-green-900/20 border border-green-800 rounded-xl p-6">
             <h4 className="font-semibold text-green-400 mb-3">✓ What&apos;s Included</h4>
             <ul className="space-y-2 text-sm text-neutral-300">
-              <li>• Instant Bankability Score (0-10 scale)</li>
-              <li>• Full credit analysis with soft pull</li>
-              <li>• Personalized funding roadmap</li>
-              <li>• Lender matching and recommendations</li>
-              <li>• No Silent Denials™ guarantee</li>
-              <li>• Monthly credit monitoring</li>
-              <li>• Priority support</li>
+              {plan.features.map((feature, idx) => (
+                <li key={idx}>• {feature}</li>
+              ))}
             </ul>
             <p className="text-xs text-neutral-400 mt-4">Cancel anytime. No long-term commitment.</p>
           </div>

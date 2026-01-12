@@ -1,21 +1,28 @@
 import Image from 'next/image';
 
 export default function Pricing() {
-  const features = [
-    'Real-time credit analysis',
-    'Level10 Bankability Score',
-    'Personalized improvement tasks',
+  const coreFeatures = [
+    'Readiness snapshot',
+    'Educational insights',
+    'Basic credit monitoring',
+    'Community support',
+  ];
+
+  const proFeatures = [
+    'Identity validation',
+    'Full credit analysis with Level10 Score',
+    'Unlimited credit refreshes',
+    'Personalized improvement roadmap',
     'Lender matching & prequalification',
-    'Business credit tracking',
-    'Financial coaching resources',
-    'Monthly progress reports',
-    'Priority support',
+    'Real-time monitoring & alerts',
+    'Document vault',
+    'Priority coaching signals',
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10">
+    <div className="max-w-7xl mx-auto px-6 py-10">
       {/* Hero Section */}
-      <div className="relative h-64 mb-8 rounded-2xl overflow-hidden">
+      <div className="relative h-64 mb-12 rounded-2xl overflow-hidden">
         <Image
           src="https://images.pexels.com/photos/3943716/pexels-photo-3943716.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
           alt="Success"
@@ -26,43 +33,119 @@ export default function Pricing() {
         <div className="absolute inset-0 flex items-center px-10">
           <div>
             <h1 className="text-5xl font-bold text-white mb-4">Simple, Transparent Pricing</h1>
-            <p className="text-xl text-neutral-200">Everything you need to become bankable</p>
+            <p className="text-xl text-neutral-200">Choose the plan that fits your funding journey</p>
           </div>
         </div>
       </div>
 
-      {/* Pricing Card */}
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-gradient-to-br from-green-900/30 to-neutral-900 border-2 border-green-500 rounded-2xl p-10 text-center">
-          <div className="text-green-400 text-sm font-semibold mb-3">MONTHLY SUBSCRIPTION</div>
-          <div className="flex items-baseline justify-center mb-6">
-            <span className="text-6xl font-bold text-white">$10</span>
-            <span className="text-2xl text-neutral-400 ml-2">/month</span>
+      {/* Pricing Cards */}
+      <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        
+        {/* Core Plan */}
+        <div className="bg-neutral-900 border border-neutral-700 rounded-2xl p-8 flex flex-col">
+          <div className="text-green-400 text-sm font-semibold mb-3">LEVEL10 CORE</div>
+          <div className="flex items-baseline mb-4">
+            <span className="text-5xl font-bold text-white">$10</span>
+            <span className="text-xl text-neutral-400 ml-2">/month</span>
           </div>
-          <p className="text-xl text-neutral-300 mb-8">
-            Full access to your Bankability Dashboard, Credit Coaching, Funding Readiness, Business Credit Suite, and Lender Matching.
+          <p className="text-neutral-300 mb-6">
+            Perfect for business owners who want to understand their funding readiness baseline.
           </p>
           
-          <div className="mb-8">
-            <div className="grid md:grid-cols-2 gap-3 text-left">
-              {features.map((feature) => (
-                <div key={feature} className="flex items-center gap-2">
-                  <span className="text-green-400">✓</span>
+          <div className="mb-8 flex-1">
+            <div className="space-y-3">
+              {coreFeatures.map((feature) => (
+                <div key={feature} className="flex items-start gap-2">
+                  <span className="text-green-400 mt-1">✓</span>
                   <span className="text-neutral-300">{feature}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <a href="/register" className="inline-block bg-green-500 text-black px-10 py-4 rounded-lg font-bold text-lg hover:bg-green-600 transition">
-            Get Started Now
+          <a href="/register?plan=core" className="block text-center bg-neutral-800 text-white px-8 py-3 rounded-lg font-semibold hover:bg-neutral-700 transition">
+            Start with Core
           </a>
-          <p className="text-sm text-neutral-400 mt-4">Just $10/month. Cancel anytime.</p>
+          <p className="text-xs text-neutral-500 mt-3 text-center">No setup fee • Cancel anytime</p>
         </div>
 
-        <div className="mt-8 text-center text-sm text-neutral-400">
-          <p>Questions? <a href="/contact" className="text-green-400 hover:underline">Contact us</a> or check our <a href="/how-it-works" className="text-green-400 hover:underline">FAQ</a></p>
+        {/* Pro Plan */}
+        <div className="bg-gradient-to-br from-green-900/30 to-neutral-900 border-2 border-green-500 rounded-2xl p-8 flex flex-col relative">
+          <div className="absolute top-0 right-8 -mt-3">
+            <span className="bg-green-500 text-black text-xs font-bold px-3 py-1 rounded-full">MOST POPULAR</span>
+          </div>
+          
+          <div className="text-green-400 text-sm font-semibold mb-3">LEVEL10 PRO</div>
+          <div className="flex items-baseline mb-2">
+            <span className="text-5xl font-bold text-white">$29</span>
+            <span className="text-xl text-neutral-400 ml-2">/month</span>
+          </div>
+          <div className="text-sm text-neutral-400 mb-4">
+            + $25 one-time Readiness Setup
+          </div>
+          <p className="text-neutral-300 mb-6">
+            Full platform access with identity validation, ongoing monitoring, and lender matching.
+          </p>
+          
+          <div className="mb-8 flex-1">
+            <div className="space-y-3">
+              {proFeatures.map((feature) => (
+                <div key={feature} className="flex items-start gap-2">
+                  <span className="text-green-400 mt-1">✓</span>
+                  <span className="text-neutral-300">{feature}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <a href="/register?plan=pro" className="block text-center bg-green-500 text-black px-8 py-3 rounded-lg font-bold hover:bg-green-600 transition">
+            Start with Pro
+          </a>
+          <p className="text-xs text-neutral-400 mt-3 text-center">$25 setup charged once • Cancel anytime</p>
         </div>
+      </div>
+
+      {/* FAQ Section */}
+      <div className="mt-16 max-w-3xl mx-auto">
+        <h2 className="text-3xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
+        
+        <div className="space-y-6">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
+            <h3 className="font-bold mb-2">What's included in the $25 Readiness Setup?</h3>
+            <p className="text-neutral-400 text-sm">
+              The one-time setup fee covers identity validation, initial credit analysis with MicroBilt, 
+              and establishing your baseline Level10 Score. This is charged only once when you start Pro.
+            </p>
+          </div>
+
+          <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
+            <h3 className="font-bold mb-2">Can I upgrade from Core to Pro later?</h3>
+            <p className="text-neutral-400 text-sm">
+              Yes! You can upgrade anytime. The $25 setup fee applies when you upgrade to Pro. 
+              Your Core subscription ends and Pro begins immediately.
+            </p>
+          </div>
+
+          <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
+            <h3 className="font-bold mb-2">What's the difference in credit monitoring?</h3>
+            <p className="text-neutral-400 text-sm">
+              Core gives you a monthly readiness snapshot. Pro includes unlimited credit refreshes, 
+              real-time monitoring, and alerts when changes impact your bankability.
+            </p>
+          </div>
+
+          <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
+            <h3 className="font-bold mb-2">Do lenders pay anything?</h3>
+            <p className="text-neutral-400 text-sm">
+              No. Lenders join free by invite and earn a 5% commission on funded loans. 
+              Level10 only succeeds when you fund borrowers.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-12 text-center text-sm text-neutral-400">
+        <p>Questions? <a href="/contact" className="text-green-400 hover:underline">Contact us</a> or check our <a href="/how-it-works" className="text-green-400 hover:underline">FAQ</a></p>
       </div>
     </div>
   );

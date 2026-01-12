@@ -93,6 +93,27 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
+      {/* Plan Badge */}
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center gap-3">
+          <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
+            user.subscriptionPlan === 'pro' 
+              ? 'bg-green-500 text-black' 
+              : 'bg-neutral-800 text-neutral-300'
+          }`}>
+            {user.subscriptionPlan === 'pro' ? '⭐ Level10 Pro' : 'Level10 Core'}
+          </span>
+          {user.subscriptionPlan === 'core' && (
+            <Link 
+              href="/payment?upgrade=pro" 
+              className="text-green-400 hover:text-green-300 text-sm font-semibold transition"
+            >
+              Upgrade to Pro →
+            </Link>
+          )}
+        </div>
+      </div>
+
       {/* Hero Section */}
       <div className="relative h-48 mb-8 rounded-2xl overflow-hidden">
         <Image

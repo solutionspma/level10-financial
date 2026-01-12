@@ -56,6 +56,18 @@ export default function Credit() {
       return;
     }
 
+    // Check plan-based refresh limits
+    if (creditReport && user.subscriptionPlan === 'core') {
+      const daysSinceLastPull = Math.floor(
+        (Date.now() - new Date(creditReport.pulled_at).getTime()) / (1000 * 60 * 60 * 24)
+      );
+      
+      if (daysSinceLastPull < 30) {
+        alert(`Core plan allows one credit refresh per month. Your last pull was ${daysSinceLastPull} days ago. Upgrade to Pro for unlimited refreshes.`);
+        return;
+      }
+    }
+
     setPulling(true);
 
     try {
@@ -126,6 +138,12 @@ export default function Credit() {
           >
             {pulling ? 'Pulling Report...' : 'Pull Credit Report'}
           </button>
+
+          {user.subscriptionPlan === 'core' && (
+            <p className="text-xs text-neutral-500 mt-3">
+              Core plan: 1 refresh per month • <Link href="/pricing" className="text-green-400 hover:underline">Upgrade to Pro</Link> for unlimited
+            </p>
+          )}
 
           <div className="mt-8 pt-8 border-t border-neutral-800">
             <h3 className="text-lg font-semibold text-blue-400 mb-3">🔒 Soft Pull - No Impact on Score</h3>

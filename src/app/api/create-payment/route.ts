@@ -5,12 +5,20 @@ import Stripe from 'stripe';
 // This is a server-side API route for processing Stripe payments
 export async function POST(request: NextRequest) {
   try {
-    const { paymentMethodId, email } = await request.json();
+    const { paymentMethodId, email, plan = 'core', isUpgrade = false } = await request.json();
 
     // Validate required fields
     if (!paymentMethodId || !email) {
       return NextResponse.json(
         { error: 'Missing required payment fields' },
+        { status: 400 }
+      );
+    }
+
+    // Validate plan
+    if (plan !== 'core' && plan !== 'pro') {
+      return NextResponse.json(
+        { error: 'Invalid plan selected' },
         { status: 400 }
       );
     }
@@ -34,6 +42,28 @@ export async function POST(request: NextRequest) {
       apiVersion: '2025-12-15.clover',
     });
 
+    // Get Stripe price IDs from environment
+    const stripePrices = {
+      core: process.env.STRIPE_PRICE_CORE,
+      pro: process.env.STRIPE_PRICE_PRO,
+      proSetup: process.env.STRIPE_PRICE_PRO_SETUP,
+    };
+
+    // Validate required price IDs exist
+    if (!stripePrices.core || !stripePrices.pro || !stripePrices.proSetup) {
+      console.error('Stripe price IDs not fully configured');
+      return NextResponse.json(
+        { 
+          error: 'Payment configuration incomplete. Please contact support.',
+          details: 'Add STRIPE_PRICE_CORE, STRIPE_PRICE_PRO, and STRIPE_PRICE_PRO_SETUP to environment variables'
+        },
+        { status: 503 }
+      );
+    }
+
+    const selectedPrice = plan === 'core' ? stripePrices.core : stripePrices.pro;
+    const planAmount = plan === 'core' ? 10.00 : 29.00;
+
     // Create or retrieve customer
     const customers = await stripe.customers.list({
       email: email,
@@ -47,6 +77,12 @@ export async function POST(request: NextRequest) {
       await stripe.paymentMethods.attach(paymentMethodId, {
         customer: customer.id,
       });
+      // Update default payment method
+      await stripe.customers.update(customer.id, {
+        invoice_settings: {
+          default_payment_method: paymentMethodId,
+        },
+      });
     } else {
       customer = await stripe.customers.create({
         email: email,
@@ -57,21 +93,35 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Create subscription for recurring billing (this will also charge the first payment)
+    // Check if user needs to pay setup fee (Pro plan only, first time)
+    const supabase = getServiceSupabase();
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('id, email, setup_fee_paid')
+      .eq('email', email)
+      .single();
+
+    const needsSetupFee = plan === 'pro' && !existingUser?.setup_fee_paid;
+
+    // Build subscription items
+    const subscriptionItems: Stripe.SubscriptionCreateParams.Item[] = [
+      {
+        price: selectedPrice,
+      },
+    ];
+
+    // Add setup fee as one-time charge if needed
+    if (needsSetupFee) {
+      subscriptionItems.push({
+        price: stripePrices.proSetup!,
+        quantity: 1,
+      });
+    }
+
+    // Create or update subscription
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
-      items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product: process.env.STRIPE_PRODUCT_ID || 'prod_level10_pro', // Use product ID
-            unit_amount: 1000, // $10.00 in cents
-            recurring: {
-              interval: 'month',
-            },
-          },
-        },
-      ],
+      items: subscriptionItems,
       default_payment_method: paymentMethodId,
       payment_behavior: 'default_incomplete',
       payment_settings: {
@@ -79,27 +129,25 @@ export async function POST(request: NextRequest) {
         save_default_payment_method: 'on_subscription',
       },
       expand: ['latest_invoice.payment_intent'],
+      metadata: {
+        plan: plan,
+        is_upgrade: isUpgrade.toString(),
+      },
     });
 
     // Save/update user in Supabase
-    const supabase = getServiceSupabase();
     
-    // Check if user exists
-    const { data: existingUser } = await supabase
-      .from('users')
-      .select('id, email')
-      .eq('email', email)
-      .single();
-
+    // Check if user exists (already queried above for setup fee check)
     const userData = {
       email,
       subscription_status: 'active',
-      subscription_plan: 'Level10 Pro',
-      subscription_amount: 10.00,
+      subscription_plan: plan,
+      subscription_amount: planAmount,
       next_billing_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
       stripe_customer_id: customer.id,
       stripe_subscription_id: subscription.id,
       last_payment_date: new Date().toISOString(),
+      setup_fee_paid: needsSetupFee ? true : (existingUser?.setup_fee_paid || false),
     };
 
     let dbUser;
@@ -126,17 +174,22 @@ export async function POST(request: NextRequest) {
       dbUser = data;
     }
 
+    // Calculate total payment amount
+    const totalAmount = needsSetupFee ? planAmount + 25.00 : planAmount;
+
     // Log payment transaction
     await supabase.from('payments').insert([{
       user_id: dbUser.id,
       stripe_subscription_id: subscription.id,
-      amount: 10.00,
+      amount: totalAmount,
       currency: 'usd',
       status: 'succeeded',
-      description: 'Level10 Pro - Monthly Subscription',
+      description: `Level10 ${plan === 'core' ? 'Core' : 'Pro'} - ${isUpgrade ? 'Upgrade' : 'Monthly Subscription'}${needsSetupFee ? ' + Setup Fee' : ''}`,
       metadata: {
         subscription_id: subscription.id,
         customer_id: customer.id,
+        plan: plan,
+        setup_fee_included: needsSetupFee,
       },
     }]);
 

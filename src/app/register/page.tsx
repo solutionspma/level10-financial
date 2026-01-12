@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import Image from 'next/image';
 
 export default function Register() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login } = useAuth();
   const [formData, setFormData] = useState({
     firstName: '',
@@ -21,6 +22,9 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [useSupabaseAuth, setUseSupabaseAuth] = useState(true);
+
+  // Get selected plan from URL
+  const selectedPlan = searchParams.get('plan') || 'core';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,10 +93,11 @@ export default function Register() {
           kycStatus: 'none',
           emailVerified: false,
           subscriptionStatus: 'none',
+          subscriptionPlan: 'none',
         });
 
-        // Redirect to email verification notice
-        router.push('/verify-email');
+        // Redirect to payment with selected plan
+        router.push(`/payment?plan=${selectedPlan}`);
       } else {
         // Demo mode fallback
         const userData = {
@@ -107,12 +112,13 @@ export default function Register() {
           kycStatus: 'none' as const,
           emailVerified: false,
           subscriptionStatus: 'none' as const,
+          subscriptionPlan: 'none' as const,
         };
 
         await login(userData);
         
-        // Redirect to KYC verification
-        router.push('/kyc');
+        // Redirect to payment with selected plan
+        router.push(`/payment?plan=${selectedPlan}`);
       }
     } catch (err: any) {
       console.error('Registration error:', err);
@@ -143,7 +149,17 @@ export default function Register() {
       <div className="grid md:grid-cols-3 gap-8">
         {/* Registration Form */}
         <div className="md:col-span-2 bg-neutral-900 border border-neutral-800 rounded-xl p-8">
-          <h2 className="text-2xl font-bold mb-6">Create Your Account</h2>
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold mb-2">Create Your Account</h2>
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-neutral-400">Selected plan:</span>
+              <span className={`font-semibold ${selectedPlan === 'pro' ? 'text-green-400' : 'text-blue-400'}`}>
+                {selectedPlan === 'pro' ? '⭐ Level10 Pro' : 'Level10 Core'}
+              </span>
+              <span className="text-neutral-500">•</span>
+              <a href="/pricing" className="text-green-400 hover:text-green-300 transition">Change plan</a>
+            </div>
+          </div>
           
           {error && (
             <div className="bg-red-900/20 border border-red-900 text-red-400 rounded-lg p-3 mb-4 text-sm">
