@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import Image from 'next/image';
@@ -254,7 +254,9 @@ export default function PaymentPage() {
 
   return (
     <Elements stripe={stripePromise}>
-      <CheckoutForm />
+      <Suspense fallback={<div className="min-h-screen bg-black text-white flex items-center justify-center">Loading payment...</div>}>
+        <CheckoutForm />
+      </Suspense>
     </Elements>
   );
 }

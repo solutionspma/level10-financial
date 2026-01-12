@@ -139,7 +139,7 @@ export default function Credit() {
             {pulling ? 'Pulling Report...' : 'Pull Credit Report'}
           </button>
 
-          {user.subscriptionPlan === 'core' && (
+          {user?.subscriptionPlan === 'core' && (
             <p className="text-xs text-neutral-500 mt-3">
               Core plan: 1 refresh per month • <Link href="/pricing" className="text-green-400 hover:underline">Upgrade to Pro</Link> for unlimited
             </p>
