@@ -26,9 +26,9 @@ Over the past 48 hours, we've transformed Level10 from a demo platform into a fu
 
 **Technical Details:**
 - **Endpoint:** `/api/pull-credit/route.ts`
-- **Credentials:** Production keys stored in `.env.local` and Netlify
-  - Client ID: `MgKGQUMnCnYZ8DyP3fQcPIdBzAUuVrnp`
-  - Client Secret: `vWIuImQAbn8rIKSP`
+- **Credentials:** Production keys stored in `.env.local` and Netlify environment variables
+  - `MICROBILT_CLIENT_ID` (see Netlify dashboard)
+  - `MICROBILT_CLIENT_SECRET` (see Netlify dashboard)
 - **Data stored:** `credit_reports` table in Supabase
 - **User requirement:** Full 9-digit SSN (stored in `users.ssn_full`)
 

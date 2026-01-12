@@ -18,9 +18,9 @@ export default function Contact() {
     setErrorMessage('');
 
     try {
-      // TODO: Implement actual email sending via MailerSend API
-      // For now, just simulate success
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Create mailto link and open in new window
+      const mailtoLink = `mailto:solutions@pitchmarketing.agency?subject=${encodeURIComponent(`Level10 Contact: ${formData.subject}`)}&body=${encodeURIComponent(`From: ${formData.name} (${formData.email})\n\nMessage:\n${formData.message}`)}`;
+      window.location.href = mailtoLink;
       
       setStatus('success');
       setFormData({ name: '', email: '', subject: '', message: '' });
@@ -128,23 +128,15 @@ export default function Contact() {
             <h3 className="text-xl font-semibold mb-4">Get in Touch</h3>
             <div className="space-y-4 text-neutral-300">
               <div>
-                <div className="text-sm text-neutral-500 mb-1">Email Support</div>
-                <a href="mailto:solutions@pitchmarketing.agency?subject=Level10 Support Request" className="text-green-400 hover:text-green-300 transition">
-                  support@level10.financial
-                </a>
-              </div>
-              
-              <div>
-                <div className="text-sm text-neutral-500 mb-1">Compliance Inquiries</div>
-                <a href="mailto:solutions@pitchmarketing.agency?subject=Level10 Compliance Inquiry" className="text-green-400 hover:text-green-300 transition">
-                  compliance@level10.financial
-                </a>
-              </div>
-
-              <div>
                 <div className="text-sm text-neutral-500 mb-1">Business Hours</div>
                 <div>Monday - Friday: 9:00 AM - 6:00 PM EST</div>
                 <div className="text-sm text-neutral-500">We respond within 24 hours</div>
+              </div>
+              
+              <div>
+                <div className="text-sm text-neutral-500 mb-1">Response Time</div>
+                <div>Most inquiries are answered within 24 hours</div>
+                <div className="text-sm text-neutral-500">Urgent matters may take priority</div>
               </div>
             </div>
           </div>
