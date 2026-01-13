@@ -145,6 +145,11 @@ CREATE POLICY "Users can view their own credit reports"
   FOR SELECT
   USING (auth.uid() = user_id);
 
+CREATE POLICY "Users can insert their own credit reports"
+  ON public.credit_reports
+  FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
 -- RLS Policies for documents table
 CREATE POLICY "Users can view their own documents"
   ON public.documents

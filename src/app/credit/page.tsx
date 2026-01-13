@@ -170,9 +170,10 @@ export default function Credit() {
       setShowManualEntry(false);
       setManualScores({ source: 'creditkarma', equifax: '', transunion: '', experian: '' });
       alert('Credit scores saved successfully!');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving manual scores:', error);
-      alert('Failed to save credit scores. Please try again.');
+      const errorMessage = error?.message || error?.error_description || 'Failed to save credit scores. Please try again.';
+      alert(`Error: ${errorMessage}`);
     } finally {
       setPulling(false);
     }
