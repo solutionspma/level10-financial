@@ -19,6 +19,13 @@ export default function Credit() {
   const [creditReport, setCreditReport] = useState<CreditReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [pulling, setPulling] = useState(false);
+  const [showManualEntry, setShowManualEntry] = useState(false);
+  const [manualScores, setManualScores] = useState({
+    source: 'creditkarma',
+    equifax: '',
+    transunion: '',
+    experian: ''
+  });
 
   useEffect(() => {
     if (!user) {
@@ -108,6 +115,77 @@ export default function Credit() {
     }
   };
 
+  const handleManualEntry = async () => {
+    if (!manualScores.equifax && !manualScores.transunion && !manualScores.experian) {
+      alert('Please enter at least one credit score');
+      return;
+    }
+
+    setPulling(true);
+
+    try {
+      // Calculate average bankability score from entered scores
+      const scores = [
+        manualScores.equifax ? parseInt(manualScores.equifax) : 0,
+        manualScores.transunion ? parseInt(manualScores.transunion) : 0,
+        manualScores.experian ? parseInt(manualScores.experian) : 0
+      ].filter(s => s > 0);
+
+      const avgScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+      
+      // Map FICO score to bankability score (0-100 scale)
+      const bankabilityScore = Math.round((avgScore / 850) * 100);
+
+      // Save to database with manual flag
+      const { error } = await supabase
+        .from('credit_reports')
+        .insert({
+          user_id: user.id,
+          report_data: {
+            source: manualScores.source,
+            manual_entry: true,
+            scores: {
+              equifax: manualScores.equifax ? parseInt(manualScores.equifax) : null,
+              transunion: manualScores.transunion ? parseInt(manualScores.transunion) : null,
+              experian: manualScores.experian ? parseInt(manualScores.experian) : null,
+              average: avgScore
+            },
+            accounts: [],
+            inquiries: [],
+            recommendations: [
+              'Manual score entry complete. For detailed analysis, consider pulling a full credit report.',
+              'Keep monitoring your scores across all three bureaus for changes.',
+              'Regular credit monitoring can help you track improvements over time.'
+            ]
+          },
+          bankability_score: bankabilityScore,
+        });
+
+      if (error) throw error;
+
+      // Reload and close modal
+      await loadCreditReport();
+      setShowManualEntry(false);
+      setManualScores({ source: 'creditkarma', equifax: '', transunion: '', experian: '' });
+      alert('Credit scores saved successfully!');
+    } catch (error) {
+      console.error('Error saving manual scores:', error);
+      alert('Failed to save credit scores. Please try again.');
+    } finally {
+      setPulling(false);
+    }
+  };
+
+      // Reload
+      await loadCreditReport();
+    } catch (error) {
+      console.error('Error pulling credit:', error);
+      alert('Failed to pull credit report. Please try again or contact support.');
+    } finally {
+      setPulling(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-6 py-10">
@@ -131,13 +209,22 @@ export default function Credit() {
             and personalized recommendations to improve your bankability score.
           </p>
           
-          <button
-            onClick={handlePullCredit}
-            disabled={pulling}
-            className="bg-green-500 text-black px-8 py-3 rounded-lg font-semibold hover:bg-green-600 transition disabled:opacity-50"
-          >
-            {pulling ? 'Pulling Report...' : 'Pull Credit Report'}
-          </button>
+          <div className="flex gap-4 justify-center">
+            <button
+              onClick={handlePullCredit}
+              disabled={pulling}
+              className="bg-green-500 text-black px-8 py-3 rounded-lg font-semibold hover:bg-green-600 transition disabled:opacity-50"
+            >
+              {pulling ? 'Pulling Report...' : 'Pull Credit Report'}
+            </button>
+
+            <button
+              onClick={() => setShowManualEntry(true)}
+              className="bg-neutral-800 border border-neutral-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-neutral-700 transition"
+            >
+              Enter Scores Manually
+            </button>
+          </div>
 
           {user?.subscriptionPlan === 'core' && (
             <p className="text-xs text-neutral-500 mt-3">
@@ -153,6 +240,99 @@ export default function Credit() {
             </p>
           </div>
         </div>
+
+        {/* Manual Entry Modal */}
+        {showManualEntry && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+            <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-8 max-w-2xl w-full">
+              <h2 className="text-2xl font-bold mb-4">Enter Credit Scores Manually</h2>
+              <p className="text-neutral-400 mb-6">
+                Enter your credit scores from Credit Karma, Experian, or other sources. You can enter scores from one or all three bureaus.
+              </p>
+
+              <div className="space-y-4 mb-6">
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Score Source</label>
+                  <select
+                    value={manualScores.source}
+                    onChange={(e) => setManualScores({...manualScores, source: e.target.value})}
+                    className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2 text-white"
+                  >
+                    <option value="creditkarma">Credit Karma</option>
+                    <option value="experian">Experian.com</option>
+                    <option value="transunion">TransUnion</option>
+                    <option value="equifax">Equifax</option>
+                    <option value="other">Other Service</option>
+                  </select>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold mb-2">Equifax Score</label>
+                    <input
+                      type="number"
+                      min="300"
+                      max="850"
+                      placeholder="e.g., 720"
+                      value={manualScores.equifax}
+                      onChange={(e) => setManualScores({...manualScores, equifax: e.target.value})}
+                      className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2 text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold mb-2">TransUnion Score</label>
+                    <input
+                      type="number"
+                      min="300"
+                      max="850"
+                      placeholder="e.g., 715"
+                      value={manualScores.transunion}
+                      onChange={(e) => setManualScores({...manualScores, transunion: e.target.value})}
+                      className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2 text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold mb-2">Experian Score</label>
+                    <input
+                      type="number"
+                      min="300"
+                      max="850"
+                      placeholder="e.g., 710"
+                      value={manualScores.experian}
+                      onChange={(e) => setManualScores({...manualScores, experian: e.target.value})}
+                      className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2 text-white"
+                    />
+                  </div>
+                </div>
+
+                <div className="bg-blue-950/50 border border-blue-800 rounded-lg p-4">
+                  <p className="text-sm text-blue-300">
+                    💡 <strong>Tip:</strong> Enter at least one score. We'll calculate your average and generate a bankability score. For full analysis including payment history and utilization, use the "Pull Credit Report" option.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <button
+                  onClick={handleManualEntry}
+                  disabled={pulling}
+                  className="flex-1 bg-green-500 text-black px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition disabled:opacity-50"
+                >
+                  {pulling ? 'Saving...' : 'Save Scores'}
+                </button>
+                <button
+                  onClick={() => setShowManualEntry(false)}
+                  disabled={pulling}
+                  className="flex-1 bg-neutral-800 border border-neutral-700 px-6 py-3 rounded-lg hover:bg-neutral-700 transition"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -161,6 +341,8 @@ export default function Credit() {
   const reportData = creditReport.report_data || {};
   const accounts = reportData.accounts || [];
   const inquiries = reportData.inquiries || [];
+  const isManualEntry = reportData.manual_entry || false;
+  const creditScores = reportData.scores || {};
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
@@ -193,6 +375,56 @@ export default function Credit() {
                 <div className="text-xs text-neutral-500">{value.status}</div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {isManualEntry && creditScores && (
+        <div className="bg-blue-950 border border-blue-800 rounded-xl p-6 mb-6">
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <h2 className="text-2xl font-semibold mb-2">Your Credit Scores</h2>
+              <p className="text-sm text-blue-300">Source: {reportData.source || 'Manual Entry'} • Manually entered on {new Date(creditReport.pulled_at).toLocaleDateString()}</p>
+            </div>
+            <button
+              onClick={() => setShowManualEntry(true)}
+              className="bg-blue-800 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-semibold transition"
+            >
+              Update Scores
+            </button>
+          </div>
+          
+          <div className="grid md:grid-cols-4 gap-4">
+            {creditScores.equifax && (
+              <div className="bg-neutral-900 rounded-lg p-4">
+                <div className="text-neutral-400 text-sm mb-1">Equifax</div>
+                <div className="text-3xl font-bold text-green-400">{creditScores.equifax}</div>
+              </div>
+            )}
+            {creditScores.transunion && (
+              <div className="bg-neutral-900 rounded-lg p-4">
+                <div className="text-neutral-400 text-sm mb-1">TransUnion</div>
+                <div className="text-3xl font-bold text-green-400">{creditScores.transunion}</div>
+              </div>
+            )}
+            {creditScores.experian && (
+              <div className="bg-neutral-900 rounded-lg p-4">
+                <div className="text-neutral-400 text-sm mb-1">Experian</div>
+                <div className="text-3xl font-bold text-green-400">{creditScores.experian}</div>
+              </div>
+            )}
+            {creditScores.average && (
+              <div className="bg-neutral-900 rounded-lg p-4">
+                <div className="text-neutral-400 text-sm mb-1">Average</div>
+                <div className="text-3xl font-bold text-blue-400">{creditScores.average}</div>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-4 p-4 bg-yellow-900/30 border border-yellow-700 rounded-lg">
+            <p className="text-sm text-yellow-300">
+              ℹ️ These are manually entered scores. For a comprehensive analysis including payment history, utilization, and detailed recommendations, consider pulling a full credit report.
+            </p>
           </div>
         </div>
       )}

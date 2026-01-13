@@ -76,11 +76,17 @@ export default function Documents() {
         const fileExt = file.name.split('.').pop();
         const fileName = `${user.id}/${documentType}_${Date.now()}.${fileExt}`;
         
-        const { error: uploadError } = await supabase.storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
           .from('documents')
-          .upload(fileName, file);
+          .upload(fileName, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          console.error('Storage upload error:', uploadError);
+          throw new Error(`Upload failed: ${uploadError.message}`);
+        }
 
         // Save to database
         const { error: dbError } = await supabase
@@ -93,13 +99,19 @@ export default function Documents() {
             file_size: file.size,
           });
 
-        if (dbError) throw dbError;
+        if (dbError) {
+          console.error('Database insert error:', dbError);
+          // Try to clean up the uploaded file
+          await supabase.storage.from('documents').remove([fileName]);
+          throw new Error(`Database error: ${dbError.message}`);
+        }
 
         // Reload documents
         await loadDocuments();
-      } catch (error) {
+        alert('Document uploaded successfully!');
+      } catch (error: any) {
         console.error('Error uploading document:', error);
-        alert('Failed to upload document. Please try again.');
+        alert(error.message || 'Failed to upload document. Please try again.');
       } finally {
         setUploading(null);
       }
