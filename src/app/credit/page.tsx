@@ -116,6 +116,8 @@ export default function Credit() {
   };
 
   const handleManualEntry = async () => {
+    if (!user?.id) return;
+    
     if (!manualScores.equifax && !manualScores.transunion && !manualScores.experian) {
       alert('Please enter at least one credit score');
       return;
@@ -171,16 +173,6 @@ export default function Credit() {
     } catch (error) {
       console.error('Error saving manual scores:', error);
       alert('Failed to save credit scores. Please try again.');
-    } finally {
-      setPulling(false);
-    }
-  };
-
-      // Reload
-      await loadCreditReport();
-    } catch (error) {
-      console.error('Error pulling credit:', error);
-      alert('Failed to pull credit report. Please try again or contact support.');
     } finally {
       setPulling(false);
     }
