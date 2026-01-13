@@ -8,10 +8,10 @@ export default function HowItWorks() {
   const [activeModal, setActiveModal] = useState<number | null>(null);
 
   const steps = [
-    ['Connect', 'Securely connect your credit and financial data', 'https://images.pexels.com/photos/4386431/pexels-photo-4386431.jpeg?auto=compress&cs=tinysrgb&w=800'],
-    ['Analyze', 'We generate your Level10 Bankability Score', 'https://images.pexels.com/photos/7413915/pexels-photo-7413915.jpeg?auto=compress&cs=tinysrgb&w=800'],
-    ['Coach', 'Clear tasks to improve approval odds', 'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=800'],
-    ['Apply', 'Matched with lenders who approve or coach', 'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800'],
+    ['Connect', 'Securely connect your credit and financial data', 'https://images.pexels.com/photos/4386431/pexels-photo-4386431.jpeg?auto=compress&cs=tinysrgb&w=1260'],
+    ['Analyze', 'We generate your Level10 Bankability Score', 'https://images.pexels.com/photos/7413915/pexels-photo-7413915.jpeg?auto=compress&cs=tinysrgb&w=1260'],
+    ['Coach', 'Clear tasks to improve approval odds', 'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1260'],
+    ['Apply', 'Matched with lenders who approve or coach', 'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1260'],
   ];
 
   return (
@@ -23,6 +23,8 @@ export default function HowItWorks() {
           alt="Financial planning"
           fill
           className="object-cover opacity-30"
+          unoptimized
+          priority
         />
         <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/95 via-neutral-950/80 to-transparent" />
         <div className="absolute inset-0 flex items-center px-10">
@@ -40,7 +42,14 @@ export default function HowItWorks() {
             onClick={() => setActiveModal(index)}
             className="relative h-64 rounded-xl overflow-hidden group bg-neutral-900 text-left cursor-pointer transition-transform hover:scale-[1.02]"
           >
-            <Image src={img} alt={title} fill className="object-cover opacity-40 group-hover:opacity-50 transition-opacity" />
+            <Image 
+              src={img} 
+              alt={title} 
+              fill 
+              className="object-cover opacity-60 group-hover:opacity-70 transition-opacity" 
+              unoptimized
+              priority={index < 2}
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/80 to-transparent" />
             <div className="absolute inset-0 p-8 flex flex-col justify-end">
               <div className="text-green-400 font-bold text-2xl mb-2">Step {index + 1}</div>
