@@ -183,8 +183,8 @@ CREATE POLICY "Users can insert their own credit reports"
 
 ### Already Configured in `.env.local`:
 ```
-PEXELS_API_KEY=34bnCdunaiGUOBl9tVdJddI77uK4FfRxZNoZ2FkRLQWBc26wUaVTmQ51
-MAILERSEND_API_KEY=mlsn.69aa36bb994124fd8e2570163452ac10d60a87d70f91ed19771ecbd2cec22f2f
+PEXELS_API_KEY=<redacted>
+MAILERSEND_API_KEY=<redacted>
 ```
 
 ### Netlify Environment Variables:
