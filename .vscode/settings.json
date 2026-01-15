@@ -1,0 +1,16 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^git reflog -20$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^ssh-add -l 2>&1 \\| head -3$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^ssh-add ~/\\.ssh/id_ed25519 && git push origin main$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

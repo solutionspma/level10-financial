@@ -2,7 +2,7 @@
 
 **Live Demo:** http://localhost:3000
 
-A complete financial coaching and bankability platform built for the MicroBilt partnership meeting.
+A complete financial coaching and bankability platform built to help users become bankable.
 
 ---
 
@@ -14,7 +14,7 @@ A complete financial coaching and bankability platform built for the MicroBilt p
 - **Pricing** (`/pricing`) - Simple $10/month pricing
 - **Contact** (`/contact`) - Contact information
 
-### ✅ Compliance Pages (Critical for MicroBilt)
+### ✅ Compliance Pages (Critical for Credit Bureau Partnerships)
 - **Permissible Purpose** (`/permissible-purpose`) - FCRA-compliant purpose statement
 - **FCRA Compliance** (`/fcra`) - Detailed compliance documentation
 - **Privacy Policy** (`/privacy`) - GLBA/DPPA compliant privacy policy
@@ -59,7 +59,7 @@ A complete financial coaching and bankability platform built for the MicroBilt p
 > 
 > Users explicitly authorize pulls, we log every access, and we never resell data.
 > 
-> MicroBilt is core to helping underserved entrepreneurs understand *why* they're not fundable — and exactly how to fix it."
+> Industry-leading credit bureaus are core to helping underserved entrepreneurs understand *why* they're not fundable — and exactly how to fix it."
 
 Then **screen-share level10.financial** and walk through:
 
@@ -124,8 +124,8 @@ When deploying, add these to your hosting platform:
 NEXT_PUBLIC_SITE_URL=https://your-domain.com
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_PUBLIC_KEY
-MICROBILT_STATUS=pending
-MICROBILT_USE_CASE=credit_evaluation_and_coaching
+CREDIT_BUREAU_STATUS=pending
+CREDIT_BUREAU_USE_CASE=credit_evaluation_and_coaching
 ```
 
 ---
@@ -165,7 +165,7 @@ Value: [Your deployment URL]
 ## 📝 What's Next (After the Meeting)
 
 1. **Connect Supabase** - Wire up real authentication
-2. **MicroBilt Integration** - Connect to their API for live credit pulls
+2. **Credit Bureau Integration** - Connect to their API for live credit pulls
 3. **Payment Processing** - Add Stripe for subscriptions
 4. **Email Notifications** - Set up transactional emails
 5. **Analytics** - Add PostHog or Mixpanel
@@ -177,7 +177,7 @@ Value: [Your deployment URL]
 
 ✅ **Serious fintech operation** - Not a concept, a real platform
 ✅ **FCRA compliance** - We understand regulations
-✅ **Permissible purpose** - Clear, legal use case for MicroBilt
+✅ **Permissible purpose** - Clear, legal use case for credit bureaus
 ✅ **User value** - Coaching-driven, not just data extraction
 ✅ **Lender ecosystem** - Multi-sided marketplace potential
 ✅ **Scalable architecture** - Built to grow

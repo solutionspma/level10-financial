@@ -35,7 +35,7 @@
 - ✅ How It Works
 - ✅ Pricing
 - ✅ Contact
-- ✅ **FCRA Compliance** (Critical for MicroBilt)
+- ✅ **FCRA Compliance** (Critical for Credit Bureau Partnerships)
 - ✅ **Permissible Purpose**
 - ✅ Privacy Policy
 - ✅ Terms of Service
@@ -81,7 +81,7 @@ https://level10-financial.netlify.app
 4. **Lender Portal** - https://level10-financial.netlify.app/lender
 
 ### What to Say:
-> "We're building a coaching-driven bankability platform. Credit data is used strictly for evaluation, education, and prequalification. Users explicitly authorize pulls, we log every access, and we never resell data. MicroBilt is core to helping underserved entrepreneurs understand *why* they're not fundable — and exactly how to fix it."
+> "We're building a coaching-driven bankability platform. Credit data is used strictly for evaluation, education, and prequalification. Users explicitly authorize pulls, we log every access, and we never resell data. Industry-leading credit bureaus are core to helping underserved entrepreneurs understand *why* they're not fundable — and exactly how to fix it."
 
 ---
 
@@ -103,8 +103,8 @@ In Netlify Dashboard:
 
 ### 3. Environment Variables Already Set
 ✅ `NEXT_PUBLIC_PEXELS_API_KEY` - Already configured
-✅ `MICROBILT_STATUS` - Set to "pending"
-✅ `MICROBILT_USE_CASE` - Set to "credit_evaluation_and_coaching"
+✅ `CREDIT_BUREAU_STATUS` - Set to "pending"
+✅ `CREDIT_BUREAU_USE_CASE` - Set to "credit_evaluation_and_coaching"
 
 ---
 
@@ -131,7 +131,7 @@ When you demo tomorrow, Jack will see:
 ✅ **Complete user flows** - Registration → Dashboard → Lender matching
 ✅ **Compliance focus** - FCRA, privacy, permissible purpose
 ✅ **Multi-sided marketplace** - Users, lenders, admins
-✅ **Scalable architecture** - Next.js, ready for MicroBilt API
+✅ **Scalable architecture** - Next.js, ready for credit bureau API integration
 
 ---
 
@@ -152,7 +152,7 @@ When you demo tomorrow, Jack will see:
 **The story is clear.**
 **The opportunity is massive.**
 
-**Go close that MicroBilt partnership.**
+**Go close those credit bureau partnerships.**
 
 ---
 

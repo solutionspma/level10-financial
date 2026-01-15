@@ -102,7 +102,7 @@ export default function Admin() {
             <div className="text-green-400 font-semibold">✓ Active</div>
           </div>
           <div>
-            <div className="text-neutral-400 mb-1">MicroBilt Integration</div>
+            <div className="text-neutral-400 mb-1">Credit Bureau Integration</div>
             <div className="text-yellow-400 font-semibold">⚠ Pending</div>
           </div>
           <div>

@@ -53,7 +53,7 @@ Major platform updates completed including image optimization, document upload f
 
 ### 3. Multi-Source Credit Score Integration ⭐
 **New Feature:** Manual credit score entry system  
-**Purpose:** Allows users to enter scores when MicroBilt isn't ready or having issues
+**Purpose:** Allows users to enter scores when credit bureau API isn't ready or having issues
 
 **Capabilities:**
 - Enter scores from Credit Karma, Experian, TransUnion, Equifax, or other sources
@@ -194,7 +194,7 @@ Verify these are set in Netlify dashboard:
 - `SUPABASE_SERVICE_ROLE_KEY`
 - All Stripe keys (LIVE mode)
 - `OPENAI_API_KEY`
-- `MICROBILT_CLIENT_ID` / `MICROBILT_CLIENT_SECRET`
+- `CREDIT_BUREAU_CLIENT_ID` / `CREDIT_BUREAU_CLIENT_SECRET`
 - `MAILERSEND_API_KEY`
 
 ---
@@ -289,7 +289,7 @@ supabase/migrations/20260113_*.sql     (new migration)
 | Image Display | ✅ Live | Working on all pages |
 | Document Upload | ✅ Live | With improved error messages |
 | Manual Credit Entry | 🟡 Pending | Needs SQL policy application |
-| MicroBilt Integration | 🔵 Planned | API endpoint ready, needs testing |
+| Credit Bureau Integration | 🔵 Planned | API endpoint ready, needs testing |
 | Credit Score Display | ✅ Live | Shows manual or pulled scores |
 
 ---

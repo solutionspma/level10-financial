@@ -90,7 +90,7 @@ export default function KYCPage() {
                 required
               />
               <p className="text-xs text-neutral-500 mt-1">
-                🔒 Enter full 9-digit SSN. Encrypted and stored securely for MicroBilt credit bureau integration.
+                🔒 Enter full 9-digit SSN. Encrypted and stored securely for credit bureau integration.
               </p>
             </div>
 

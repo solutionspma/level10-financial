@@ -2,7 +2,7 @@
 
 ## Overview
 
-Successfully implemented a two-tier pricing structure for Level10 Financial platform to cover MicroBilt API costs ($1-2 per credit pull) while providing sustainable revenue model.
+Successfully implemented a two-tier pricing structure for Level10 Financial platform to cover credit bureau API costs ($1-2 per credit pull) while providing sustainable revenue model.
 
 **Date Completed**: January 12, 2026  
 **Approach**: Evolutionary overlay - preserved all existing functionality, added plan awareness
@@ -22,7 +22,7 @@ Successfully implemented a two-tier pricing structure for Level10 Financial plat
 ### Pro Plan - $29/month + $25 setup
 - **Target**: Serious borrowers, active funding seekers
 - **Features**:
-  - Full credit analysis with MicroBilt
+  - Full credit analysis with industry credit bureaus
   - Unlimited credit refreshes
   - Lender matching and recommendations
   - Priority support and coaching
@@ -47,11 +47,11 @@ Successfully implemented a two-tier pricing structure for Level10 Financial plat
 - Charged **once** per user lifetime
 - Tracked via `setup_fee_paid` boolean in database
 - If user downgrades and re-upgrades, **no** second setup fee
-- Covers: Identity validation, initial MicroBilt pull, account setup
+- Covers: Identity validation, initial credit pull, account setup
 
 ### Cost Analysis
 ```
-MicroBilt cost per pull: $1-2
+Credit bureau cost per pull: $1-2
 Core revenue per user: $10/month
 Pro revenue per user: $29/month + $25 setup
 
@@ -263,14 +263,14 @@ setup_fee_paid BOOLEAN DEFAULT false
 - **Conversion rate**: Core vs Pro selection
 - **Upgrade rate**: Core → Pro conversions
 - **ARPU**: Average revenue per user by plan
-- **Cost coverage**: MicroBilt costs vs plan revenue
+- **Cost coverage**: Credit bureau costs vs plan revenue
 - **Churn rate**: By plan tier
 - **Setup fee revenue**: One-time revenue contribution
 
 ### Success Indicators
 - ✅ Core plan covers basic infrastructure costs
 - ✅ Pro plan provides healthy margin (>50%)
-- ✅ Setup fee covers initial MicroBilt + identity validation
+- ✅ Setup fee covers initial credit pull + identity validation
 - ✅ Upgrade rate >15% (Core to Pro)
 - ✅ No payment processing errors
 - ✅ Users understand feature differences

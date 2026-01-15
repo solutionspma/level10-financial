@@ -78,7 +78,7 @@ export default function Credit() {
     setPulling(true);
 
     try {
-      // Call MicroBilt API (will implement this endpoint next)
+      // Call credit bureau API (will implement this endpoint next)
       const response = await fetch('/api/pull-credit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -229,7 +229,7 @@ export default function Credit() {
             <h3 className="text-lg font-semibold text-blue-400 mb-3">🔒 Soft Pull - No Impact on Score</h3>
             <p className="text-sm text-neutral-400 max-w-xl mx-auto">
               This is a soft inquiry that will not affect your credit score. Your report is pulled directly 
-              from credit bureaus via MicroBilt and stored securely in your account.
+              from credit bureaus and stored securely in your account.
             </p>
           </div>
         </div>

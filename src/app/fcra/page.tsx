@@ -70,7 +70,7 @@ export default function FCRA() {
         <div className="bg-green-950 border border-green-800 rounded-lg p-6 mt-8">
           <h3 className="text-xl font-semibold text-green-400 mb-3">Consumer Reporting Agency (CRA) Partnership</h3>
           <p>
-            Level10 partners with FCRA-compliant Consumer Reporting Agencies including MicroBilt 
+            Level10 partners with FCRA-compliant Consumer Reporting Agencies 
             to access credit data. All CRA partners maintain strict compliance standards and 
             are regularly audited for data protection practices.
           </p>

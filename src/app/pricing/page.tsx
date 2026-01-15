@@ -113,7 +113,7 @@ export default function Pricing() {
           <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6">
             <h3 className="font-bold mb-2">What's included in the $25 Readiness Setup?</h3>
             <p className="text-neutral-400 text-sm">
-              The one-time setup fee covers identity validation, initial credit analysis with MicroBilt, 
+              The one-time setup fee covers identity validation, initial credit analysis with industry-leading credit bureaus, 
               and establishing your baseline Level10 Score. This is charged only once when you start Pro.
             </p>
           </div>

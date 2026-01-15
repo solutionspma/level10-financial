@@ -174,7 +174,7 @@ After deployment, verify in production:
 - Core signups vs Pro signups
 - Core to Pro upgrade rate
 - Average revenue per user (ARPU)
-- MicroBilt cost per user vs plan revenue
+- Credit bureau cost per user vs plan revenue
 - Churn rate by plan
 - Feature usage by plan tier
 

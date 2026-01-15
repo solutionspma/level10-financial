@@ -90,7 +90,7 @@ Dashboard:   /dashboard (shows plan badge)
 Core:  $10/mo × 12 = $120/year
 Pro:   $29/mo × 12 + $25 = $373/year
 
-MicroBilt cost: $1-2 per pull
+Credit bureau cost: $1-2 per pull
 Break-even: ~10 pulls over lifetime (Core)
            Immediate profit (Pro with setup fee)
 ```

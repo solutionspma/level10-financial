@@ -15,7 +15,7 @@ export interface User {
   emailVerified?: boolean;
   // KYC fields
   ssn?: string; // Last 4 digits for display
-  ssnFull?: string; // Full SSN for MicroBilt API calls
+  ssnFull?: string; // Full SSN for credit bureau API calls
   dateOfBirth?: string;
   driversLicense?: string;
   licenseState?: string;

@@ -13,12 +13,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // MicroBilt API credentials (add these to .env.local)
-    const MICROBILT_CLIENT_ID = process.env.MICROBILT_CLIENT_ID;
-    const MICROBILT_CLIENT_SECRET = process.env.MICROBILT_CLIENT_SECRET;
+    // Credit Bureau API credentials (add these to .env.local)
+    const CREDIT_BUREAU_CLIENT_ID = process.env.CREDIT_BUREAU_CLIENT_ID;
+    const CREDIT_BUREAU_CLIENT_SECRET = process.env.CREDIT_BUREAU_CLIENT_SECRET;
 
-    if (!MICROBILT_CLIENT_ID || !MICROBILT_CLIENT_SECRET) {
-      console.error('MicroBilt credentials not configured');
+    if (!CREDIT_BUREAU_CLIENT_ID || !CREDIT_BUREAU_CLIENT_SECRET) {
+      console.error('Credit bureau credentials not configured');
       return NextResponse.json(
         { error: 'Service configuration error' },
         { status: 500 }
@@ -26,27 +26,27 @@ export async function POST(request: NextRequest) {
     }
 
     // Step 1: Get OAuth token
-    const tokenResponse = await fetch('https://api.microbilt.com/OAuth/GetAccessToken', {
+    const tokenResponse = await fetch('https://api.creditbureau.example/OAuth/GetAccessToken', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
-        client_id: MICROBILT_CLIENT_ID,
-        client_secret: MICROBILT_CLIENT_SECRET,
+        client_id: CREDIT_BUREAU_CLIENT_ID,
+        client_secret: CREDIT_BUREAU_CLIENT_SECRET,
         grant_type: 'client_credentials',
       }),
     });
 
     if (!tokenResponse.ok) {
-      throw new Error('Failed to get MicroBilt access token');
+      throw new Error('Failed to get credit bureau access token');
     }
 
     const tokenData = await tokenResponse.json();
     const accessToken = tokenData.access_token;
 
     // Step 2: Pull credit report
-    const creditResponse = await fetch('https://api.microbilt.com/CreditReport/GetReport', {
+    const creditResponse = await fetch('https://api.creditbureau.example/CreditReport/GetReport', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!creditResponse.ok) {
-      throw new Error('Failed to pull credit report from MicroBilt');
+      throw new Error('Failed to pull credit report from credit bureau');
     }
 
     const creditData = await creditResponse.json();

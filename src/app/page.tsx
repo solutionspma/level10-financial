@@ -108,7 +108,7 @@ export default function Home() {
         <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-8 mb-6">
           <h3 className="text-2xl font-bold text-green-400 mb-4">Smart Credit Analysis</h3>
           <p className="text-neutral-300 mb-4">
-            We pull real credit data via MicroBilt and show you exactly why lenders say no. 
+            We pull real credit data from industry-leading credit bureaus and show you exactly why lenders say no. 
             Our analysis highlights utilization issues, payment history gaps, and identity mismatches. 
             No disputes, no letters, no games — just the truth about what's blocking your approval.
           </p>
@@ -213,11 +213,11 @@ export default function Home() {
           >
             <h3 className="text-3xl font-bold text-green-400 mb-4">Smart Credit Analysis</h3>
             <p className="text-neutral-300 mb-4">
-              We pull real credit data via MicroBilt and show you exactly why lenders say no. 
+              We pull real credit data from industry-leading credit bureaus and show you exactly why lenders say no. 
               Our analysis highlights utilization issues, payment history gaps, and identity mismatches.
             </p>
             <ul className="text-neutral-400 space-y-2 mb-6">
-              <li>✓ Real credit data from MicroBilt</li>
+              <li>✓ Real credit data from trusted credit bureaus</li>
               <li>✓ Shows exactly why lenders deny you</li>
               <li>✓ Highlights utilization, payment history, identity issues</li>
               <li>✓ No disputes, no letters, no games</li>
